@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "582899367892",
+    "project_id": "pestisafe2025",
+    "storage_bucket": "pestisafe2025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582899367892:android:1986ba82262659ea7a2041",
+        "android_client_info": {
+          "package_name": "com.example.pestisafe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Gp-KuV5U_aEwedGbWMl4CEPfheS0dFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
