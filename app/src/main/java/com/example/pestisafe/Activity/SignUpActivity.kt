@@ -56,5 +56,11 @@ class SignUpActivity : AppCompatActivity() {
                 Toast.makeText(this, "Complete all fields.", Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.alreadyhaveanacc.setOnClickListener {
+            val intent = Intent(this@SignUpActivity, LogInActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }
