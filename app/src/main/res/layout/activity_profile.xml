@@ -2,113 +2,66 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/signuplayout"
+    android:id="@+id/profilelayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGreen"
+    android:background="@color/white"
     android:textAlignment="center"
-    tools:context=".Activity.SignUpActivity">
+    tools:context=".Activity.ProfileActivity">
 
     <TextView
-        android:id="@+id/signuptxt"
+        android:id="@+id/profiletxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="136dp"
         android:layout_marginTop="100dp"
         android:layout_marginEnd="136dp"
-        android:text="@string/sign_up"
-        android:textColor="@color/white"
+        android:text="@string/profile"
+        android:textColor="@color/darkGreen"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/alreadyhaveanacc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="136dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="136dp"
-        android:text="@string/already_have_an_account_log_in"
-        android:textColor="@color/white"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signuptxt" />
-
-    <View
-        android:id="@+id/rectangle_at_the_bot"
-        android:layout_width="414dp"
-        android:layout_height="348dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="146dp"
-        android:background="@color/white"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.666"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <ImageView
-        android:id="@+id/reccircle"
-        android:layout_width="350dp"
-        android:layout_height="390dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="144dp"
-        android:fadingEdge="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/rectangle_at_the_bot"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alreadyhaveanacc"
-        app:layout_constraintVertical_bias="0.189"
-        app:srcCompat="@drawable/round_rect_shape" />
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/txtinpfirstname"
-        android:layout_width="150dp"
+        android:id="@+id/txtfullname"
+        android:layout_width="300dp"
         android:layout_height="55dp"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="91dp"
         android:textColorHint="@color/darkGreen"
         app:boxStrokeColor="@color/darkGreen"
         app:hintTextColor="@color/darkGreen"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/reccircle">
+        app:layout_constraintTop_toBottomOf="@+id/profiletxt">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/firstname"
+            android:id="@+id/fullname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/first_name"
-            android:textColor="@color/darkGreen"
-            android:textColorLink="@color/darkGreen" />
+            android:hint="@string/name" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/txtemailaddp"
-        android:layout_width="150dp"
+        android:layout_width="300dp"
         android:layout_height="55dp"
 
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="52dp"
+        android:layout_marginTop="20dp"
         android:textColorHint="@color/darkGreen"
         app:boxStrokeColor="@color/darkGreen"
         app:hintTextColor="@color/darkGreen"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/reccircle">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtfullname">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/lastname"
+            android:id="@+id/emailaddp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/last_name"
-            android:textColor="@color/darkGreen"
-            android:textColorLink="@color/darkGreen" />
+            android:hint="@string/email_address" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -123,15 +76,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtinpfirstname">
+        app:layout_constraintTop_toBottomOf="@+id/txtemailaddp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/emailadd"
+            android:id="@+id/mobileno"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/email_address"
-            android:textColor="@color/darkGreen"
-            android:textColorLink="@color/darkGreen" />
+            android:hint="@string/mobile_number" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -144,36 +95,33 @@
         app:boxStrokeColor="@color/darkGreen"
         app:hintTextColor="@color/darkGreen"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtmobilelno"
-        app:passwordToggleEnabled="true">
+        app:layout_constraintTop_toBottomOf="@+id/txtmobilelno">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/password"
+            android:id="@+id/country"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/password"
-            android:textColor="@color/darkGreen"
-            android:textColorLink="@color/darkGreen" />
+            android:hint="@string/country" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/signupBtn"
+        android:id="@+id/updateBtn"
         android:layout_width="300dp"
         android:layout_height="55dp"
         android:layout_marginStart="160dp"
+        android:layout_marginTop="56dp"
         android:layout_marginEnd="161dp"
-        android:layout_marginBottom="91dp"
         android:backgroundTint="@color/darkGreen"
-        android:text="@string/sign_up_now"
+        android:text="@string/update"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/rectangle_at_the_bot"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtcountry"
-        app:layout_constraintVertical_bias="0.139" />
+        app:layout_constraintTop_toBottomOf="@+id/txtcountry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

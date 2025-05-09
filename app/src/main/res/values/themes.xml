@@ -2,7 +2,11 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PestiSafe" parent="Theme.Material3.DayNight.NoActionBar">
 
+        <item name="android:statusBarColor">@color/darkGreen</item>
+
     </style>
 
     <style name="Theme.PestiSafe" parent="Base.Theme.PestiSafe" />
+
+
 </resources>

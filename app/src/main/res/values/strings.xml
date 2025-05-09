@@ -22,4 +22,30 @@
     <string name="last_name">Last Name</string>
     <string name="history_of_detection_results">History of Detection Results</string>
     <string name="start_the_detection">Start The Detection</string>
+    <string name="list_of_registered_pesticide_products">List of Registered Pesticide Products</string>
+    <string name="list_of_banned_and_registered_pesticides">List of Banned and Registered Pesticides</string>
+    <string name="philippine_national_standard_for_banana_maximum_residue_limits_mrl_of_pesticides">Philippine National Standard for Banana Maximum Residue Limits (MRL) of Pesticides</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pestisafe_aims_to_provide_agricultural_safety_and_sustainability_by_innovating_solutions_for_detecting_pesticide_residue_level_in_cavendish_bananas_committed_to_empowering_supply_chain_stakeholders_promoting_a_healthier_world_through_informed_decision_and_sustainable_farming_practices">Pestisafe aims to provide agricultural safety and sustainability by innovating solutions for detecting pesticide residue level in Cavendish Bananas. Committed to empowering supply chain stakeholders, promoting a healthier world through informed decision and sustainable farming practices.</string>
+    <string name="empowering_agricultural_safety_globally_pestisafe_envisions_to_provide_pesticide_residue_level_detection_in_cavendish_banana_with_the_aid_of_advanced_technology_our_commitment_to_innovation_and_responsible_practices_aim_to_create_a_sustainable_and_secure_food_supply_for_generations">Empowering Agricultural Safety Globally. PestiSafe envisions to provide pesticide residue level detection in Cavendish Banana with the aid of advanced technology. Our commitment to innovation and responsible practices aim to create a sustainable and secure food supply for generations.</string>
+    <string name="vision">VISION</string>
+    <string name="mission">MISSION</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="rothamparo">ROTHELIEN CARYLE AKAI AMPARO qrcasamparo@tip.edu.ph</string>
+    <string name="johannah_mariz_fegues_qjmdfegues_tip_edu_ph">JOHANNAH MARIZ FEGUES qjmdfegues@tip.edu.ph</string>
+    <string name="name">Name</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="country">Country</string>
+    <string name="update">Update</string>
+    <string name="profile">Profile</string>
+    <string name="home">Home</string>
+    <string name="additional_information">Additional Information</string>
+    <string name="about">About</string>
+    <string name="upload_file">Upload File</string>
+    <string name="camera">Camera</string>
+    <string name="upload">Upload</string>
+    <string name="captured_image">Captured Image</string>
+    <string name="todo">TODO</string>
+    <string name="app_icon">App Icon</string>
 </resources>

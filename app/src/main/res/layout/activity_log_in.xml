@@ -6,36 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/darkGreen"
-    android:textAlignment="center"
     tools:context=".Activity.LogInActivity">
-
-    <ImageView
-        android:id="@+id/loginlogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="180dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="181dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pestisafeicon" />
 
     <TextView
         android:id="@+id/logintoacc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="136dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="136dp"
         android:text="@string/log_in_to_your_account"
         android:textColor="@color/white"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/reccircle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginlogo" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <View
         android:id="@+id/rectangle_at_the_bot"
@@ -54,7 +40,7 @@
 
     <ImageView
         android:id="@+id/reccircle"
-        android:layout_width="350dp"
+        android:layout_width="320dp"
         android:layout_height="390dp"
         android:fadingEdge="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/rectangle_at_the_bot"
@@ -67,7 +53,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailaddtxtin"
-        android:layout_width="300dp"
+        android:layout_width="280dp"
         android:layout_height="60dp"
         android:layout_marginTop="30dp"
         android:textColorHint="@color/darkGreen"
@@ -81,13 +67,15 @@
             android:id="@+id/emailadd"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/email_address" />
+            android:hint="@string/email_address"
+            android:textColor="@color/darkGreen"
+            android:textColorLink="@color/darkGreen" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordtxtin"
-        android:layout_width="300dp"
+        android:layout_width="280dp"
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:textColorHint="@color/darkGreen"
@@ -102,12 +90,14 @@
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/password" />
+            android:hint="@string/password"
+            android:textColor="@color/darkGreen"
+            android:textColorLink="@color/darkGreen" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/loginBtn"
-        android:layout_width="300dp"
+        android:layout_width="270dp"
         android:layout_height="55dp"
         android:layout_marginStart="160dp"
         android:layout_marginEnd="161dp"
@@ -131,9 +121,25 @@
         android:layout_marginTop="49dp"
         android:layout_marginBottom="214dp"
         android:text="@string/don_t_have_an_account_sign_up"
+        android:textColor="#777676"
         app:layout_constraintBottom_toBottomOf="@+id/rectangle_at_the_bot"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/loginBtn"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="100dp"
+        android:contentDescription="@string/app_icon"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/logintoacc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/pestisafeicon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

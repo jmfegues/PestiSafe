@@ -2,6 +2,7 @@ package com.example.pestisafe.Activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.enableEdgeToEdge
@@ -18,6 +19,7 @@ class LogInActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLogInBinding
     private lateinit var databaseReference: DatabaseReference
     private lateinit var mAuth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +67,15 @@ class LogInActivity : AppCompatActivity() {
         binding.donthaveanaccsignuptxt.setOnClickListener {
             val intent = Intent(this@LogInActivity, SignUpActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.password.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.loginBtn.performClick()
+                true
+            } else {
+                false
+            }
         }
     }
 }
