@@ -2,6 +2,7 @@ package com.example.pestisafe.Activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -50,7 +51,11 @@ class LogInActivity : AppCompatActivity() {
                 mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Toast.makeText(applicationContext, "Logged In Successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                applicationContext,
+                                "Logged In Successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             startActivity(Intent(applicationContext, MainActivity::class.java))
                             finish()
                         } else {
@@ -69,8 +74,10 @@ class LogInActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.password.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
+        binding.password.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
                 binding.loginBtn.performClick()
                 true
             } else {

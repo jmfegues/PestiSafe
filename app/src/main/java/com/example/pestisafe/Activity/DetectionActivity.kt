@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -17,6 +16,7 @@ import androidx.core.content.FileProvider
 import com.example.pestisafe.R
 import com.example.pestisafe.databinding.ActivityDetectionBinding
 import com.google.android.material.appbar.MaterialToolbar
+import com.yalantis.ucrop.UCrop
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -32,12 +32,22 @@ class DetectionActivity : AppCompatActivity() {
     private val REQUEST_CAMERA_PERMISSION = 100
     private val REQUEST_FILE_PICK = 2
 
+    companion object {
+        const val UCROP_REQUEST_CODE = UCrop.REQUEST_CROP
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Camera button
+        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = ""
+        toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         binding.cameratxt.setOnClickListener {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED
@@ -52,17 +62,8 @@ class DetectionActivity : AppCompatActivity() {
             }
         }
 
-        // File picker
         binding.fileuploadtxt.setOnClickListener {
             openFilePicker()
-        }
-
-        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.title = ""
-
-        toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
         }
     }
 
@@ -95,16 +96,31 @@ class DetectionActivity : AppCompatActivity() {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "JPEG_${timeStamp}_"
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(imageFileName, ".jpg", storageDir).apply {
+        return File.createTempFile(imageFileName, ".jpg", storageDir!!).apply {
             currentPhotoPath = absolutePath
         }
     }
 
     private fun openFilePicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*" // Restrict to images only
+        intent.type = "image/*"
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         startActivityForResult(Intent.createChooser(intent, "Select Image"), REQUEST_FILE_PICK)
+    }
+
+    private fun startCrop(sourceUri: Uri, destUri: Uri) {
+        val options = UCrop.Options().apply {
+            setToolbarTitle("Crop Image")
+            setFreeStyleCropEnabled(true)
+            setToolbarColor(ContextCompat.getColor(this@DetectionActivity, R.color.white))
+            setStatusBarColor(ContextCompat.getColor(this@DetectionActivity, R.color.darkGreen))
+        }
+
+        UCrop.of(sourceUri, destUri)
+            .withAspectRatio(1f, 1f)
+            .withMaxResultSize(1080, 1080)
+            .withOptions(options)
+            .start(this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -112,22 +128,30 @@ class DetectionActivity : AppCompatActivity() {
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             if (currentPhotoPath.isNotEmpty()) {
-                val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-                binding.capturedimage.setImageBitmap(bitmap)
-                saveImageToGallery()
+                val sourceUri = Uri.fromFile(File(currentPhotoPath))
+                val destUri = Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
+                startCrop(sourceUri, destUri)
             }
         } else if (requestCode == REQUEST_FILE_PICK && resultCode == RESULT_OK) {
-            val selectedFileUri: Uri? = data?.data
-            selectedFileUri?.let { uri ->
-                binding.capturedimage.setImageURI(uri) // Display selected image
-                val fileName = getFileName(uri)
-                Toast.makeText(this, "File selected: $fileName", Toast.LENGTH_SHORT).show()
+            data?.data?.let { uri ->
+                val destUri = Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
+                startCrop(uri, destUri)
             }
+        } else if (requestCode == UCROP_REQUEST_CODE && resultCode == RESULT_OK) {
+            val resultUri = UCrop.getOutput(data!!)
+            resultUri?.let {
+                binding.capturedimage.setImageURI(it)
+                Toast.makeText(this, "Image cropped", Toast.LENGTH_SHORT).show()
+                saveImageToGallery(it)
+            }
+        } else if (requestCode == UCROP_REQUEST_CODE && resultCode == UCrop.RESULT_ERROR) {
+            val cropError = UCrop.getError(data!!)
+            Toast.makeText(this, "Crop error: ${cropError?.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun saveImageToGallery() {
-        val file = File(currentPhotoPath)
+    private fun saveImageToGallery(croppedUri: Uri) {
+        val file = File(croppedUri.path ?: return)
         if (!file.exists()) return
 
         val name = file.name
@@ -152,17 +176,6 @@ class DetectionActivity : AppCompatActivity() {
             resolver.update(uri, values, null, null)
             Toast.makeText(this, "Saved to Gallery", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun getFileName(uri: Uri): String {
-        val cursor = contentResolver.query(uri, arrayOf("_display_name"), null, null, null)
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val columnIndex = it.getColumnIndexOrThrow("_display_name")
-                return it.getString(columnIndex)
-            }
-        }
-        return uri.path ?: "Unknown file"
     }
 
     override fun onRequestPermissionsResult(

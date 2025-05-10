@@ -38,6 +38,7 @@ android {
     buildFeatures{
         viewBinding=true
     }
+
 }
 
 dependencies {
@@ -55,8 +56,8 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.coordinatorlayout)
     testImplementation(libs.junit)
+    implementation(libs.ucrop)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
 
 }

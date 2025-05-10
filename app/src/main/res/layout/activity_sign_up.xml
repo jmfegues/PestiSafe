@@ -94,12 +94,14 @@
         android:layout_width="150dp"
         android:layout_height="55dp"
 
+        android:layout_marginStart="7dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="52dp"
         android:textColorHint="@color/darkGreen"
         app:boxStrokeColor="@color/darkGreen"
         app:hintTextColor="@color/darkGreen"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/txtinpfirstname"
         app:layout_constraintTop_toTopOf="@+id/reccircle">
 
         <com.google.android.material.textfield.TextInputEditText

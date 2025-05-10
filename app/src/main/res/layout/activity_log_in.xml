@@ -92,7 +92,10 @@
             android:layout_height="match_parent"
             android:hint="@string/password"
             android:textColor="@color/darkGreen"
-            android:textColorLink="@color/darkGreen" />
+            android:textColorLink="@color/darkGreen"
+            android:inputType="textPassword"
+            android:imeOptions="actionDone">
+        </com.google.android.material.textfield.TextInputEditText>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
