@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-files-path
-        name="my_images"
-        path="Pictures" />
+
+    <!-- External storage path for app-specific files (e.g., pictures saved by the app) -->
+    <external-path name="external_files" path="." />
+
+    <!-- External storage path for images captured using the camera -->
+    <external-path name="external_images" path="Pictures/" />
+
+    <!-- Cache directory path for temporary files (e.g., cropped images) -->
+    <cache-path name="cache" path="." />
+
+    <!-- Internal storage path (for app-specific files that are not shared) -->
+    <files-path name="internal_files" path="." />
+
 </paths>

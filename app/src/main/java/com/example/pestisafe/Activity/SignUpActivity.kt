@@ -30,7 +30,14 @@ class SignUpActivity : AppCompatActivity() {
             val email = binding.emailadd.text.toString()
             val password = binding.password.text.toString()
 
+            // Validate input
             if (email.isNotEmpty() && password.isNotEmpty() && fname.isNotEmpty() && lname.isNotEmpty()) {
+
+                if (password.length < 6) {
+                    binding.password.error = "Password must be at least 6 characters"
+                    return@setOnClickListener
+                }
+
                 mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -61,6 +68,5 @@ class SignUpActivity : AppCompatActivity() {
             val intent = Intent(this@SignUpActivity, LogInActivity::class.java)
             startActivity(intent)
         }
-
     }
 }

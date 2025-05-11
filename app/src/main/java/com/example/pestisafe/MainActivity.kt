@@ -2,13 +2,16 @@ package com.example.pestisafe
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import android.net.Uri
 import com.example.pestisafe.Activity.AboutActivity
 import com.example.pestisafe.Activity.DetectionActivity
 import com.example.pestisafe.databinding.ActivityMainBinding
 import androidx.core.net.toUri
+import com.example.pestisafe.Activity.ProfileActivity
+import com.google.android.material.appbar.MaterialToolbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,11 +23,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-
-        binding.aboutBtn.setOnClickListener {
-            val intent = Intent(this@MainActivity, AboutActivity::class.java)
-            startActivity(intent)
-        }
 
         binding.cvdetection.setOnClickListener {
             val intent = Intent(this@MainActivity, DetectionActivity::class.java)
@@ -49,6 +47,33 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = ""
+
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    // Handle menu item clicks
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.nav_about -> {
+                // Go to AboutActivity
+                val aboutIntent = Intent(this, AboutActivity::class.java)
+                startActivity(aboutIntent)
+                true
+            }
+            R.id.nav_profile -> {
+                // Go to ProfileActivity
+                val profileIntent = Intent(this, ProfileActivity::class.java)
+                startActivity(profileIntent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 }

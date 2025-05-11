@@ -3,8 +3,6 @@ package com.example.pestisafe.Activity
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.pestisafe.R
 import com.example.pestisafe.databinding.ActivityAboutBinding
 import com.google.android.material.appbar.MaterialToolbar

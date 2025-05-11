@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -13,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.example.pestisafe.R
 import com.example.pestisafe.databinding.ActivityDetectionBinding
 import com.google.android.material.appbar.MaterialToolbar
 import com.yalantis.ucrop.UCrop
@@ -27,27 +27,27 @@ class DetectionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetectionBinding
     private lateinit var photoURI: Uri
     private var currentPhotoPath: String = ""
+    private var lastSavedImageUri: Uri? = null
 
     private val REQUEST_IMAGE_CAPTURE = 1
-    private val REQUEST_CAMERA_PERMISSION = 100
     private val REQUEST_FILE_PICK = 2
-
-    companion object {
-        const val UCROP_REQUEST_CODE = UCrop.REQUEST_CROP
-    }
+    private val REQUEST_CAMERA_PERMISSION = 100
+    private val REQUEST_STORAGE_PERMISSION = 200
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
+        // Toolbar setup
+        val toolbar = findViewById<MaterialToolbar>(com.example.pestisafe.R.id.topAppBar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
         toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        // Camera button
         binding.cameratxt.setOnClickListener {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED
@@ -62,8 +62,36 @@ class DetectionActivity : AppCompatActivity() {
             }
         }
 
+        // File upload button
         binding.fileuploadtxt.setOnClickListener {
-            openFilePicker()
+            val storagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Manifest.permission.READ_MEDIA_IMAGES
+            } else {
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            }
+
+            if (ContextCompat.checkSelfPermission(this, storagePermission)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(storagePermission),
+                    REQUEST_STORAGE_PERMISSION
+                )
+            } else {
+                openFilePicker()
+            }
+        }
+
+        // Image preview click
+        binding.capturedimage.setOnClickListener {
+            lastSavedImageUri?.let { uri ->
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, contentResolver.getType(uri))
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(intent)
+            }
         }
     }
 
@@ -84,6 +112,7 @@ class DetectionActivity : AppCompatActivity() {
                     it
                 )
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
             }
         } else {
@@ -93,7 +122,8 @@ class DetectionActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp: String =
+            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "JPEG_${timeStamp}_"
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(imageFileName, ".jpg", storageDir!!).apply {
@@ -102,80 +132,84 @@ class DetectionActivity : AppCompatActivity() {
     }
 
     private fun openFilePicker() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(Intent.createChooser(intent, "Select Image"), REQUEST_FILE_PICK)
     }
 
-    private fun startCrop(sourceUri: Uri, destUri: Uri) {
-        val options = UCrop.Options().apply {
-            setToolbarTitle("Crop Image")
-            setFreeStyleCropEnabled(true)
-            setToolbarColor(ContextCompat.getColor(this@DetectionActivity, R.color.white))
-            setStatusBarColor(ContextCompat.getColor(this@DetectionActivity, R.color.darkGreen))
-        }
-
-        UCrop.of(sourceUri, destUri)
-            .withAspectRatio(1f, 1f)
-            .withMaxResultSize(1080, 1080)
-            .withOptions(options)
-            .start(this)
-    }
-
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            if (currentPhotoPath.isNotEmpty()) {
-                val sourceUri = Uri.fromFile(File(currentPhotoPath))
-                val destUri = Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
-                startCrop(sourceUri, destUri)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                REQUEST_IMAGE_CAPTURE -> {
+                    val imageUri = Uri.fromFile(File(currentPhotoPath))
+                    startCrop(imageUri)
+                }
+
+                REQUEST_FILE_PICK -> {
+                    data?.data?.let { uri ->
+                        startCrop(uri)
+                    }
+                }
+
+                UCrop.REQUEST_CROP -> {
+                    val resultUri = UCrop.getOutput(data!!)
+                    resultUri?.let {
+                        binding.capturedimage.setImageURI(it)
+                        saveImageToGallery(it)
+                        lastSavedImageUri = it
+                    }
+                }
             }
-        } else if (requestCode == REQUEST_FILE_PICK && resultCode == RESULT_OK) {
-            data?.data?.let { uri ->
-                val destUri = Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
-                startCrop(uri, destUri)
-            }
-        } else if (requestCode == UCROP_REQUEST_CODE && resultCode == RESULT_OK) {
-            val resultUri = UCrop.getOutput(data!!)
-            resultUri?.let {
-                binding.capturedimage.setImageURI(it)
-                Toast.makeText(this, "Image cropped", Toast.LENGTH_SHORT).show()
-                saveImageToGallery(it)
-            }
-        } else if (requestCode == UCROP_REQUEST_CODE && resultCode == UCrop.RESULT_ERROR) {
-            val cropError = UCrop.getError(data!!)
-            Toast.makeText(this, "Crop error: ${cropError?.message}", Toast.LENGTH_SHORT).show()
+        } else if (requestCode == UCrop.RESULT_ERROR) {
+            val cropError = data?.let { UCrop.getError(it) }
+            cropError?.printStackTrace()
+            Toast.makeText(this, "Crop failed: ${cropError?.message}", Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun saveImageToGallery(croppedUri: Uri) {
-        val file = File(croppedUri.path ?: return)
-        if (!file.exists()) return
+    private fun startCrop(sourceUri: Uri) {
+        val destinationUri =
+            Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
 
-        val name = file.name
+        val options = UCrop.Options().apply {
+            setFreeStyleCropEnabled(true)
+            setHideBottomControls(false)
+            setCompressionQuality(80)
+        }
+
+        UCrop.of(sourceUri, destinationUri)
+            .withOptions(options)
+            .withAspectRatio(0f, 0f)
+            .withMaxResultSize(1080, 1080)
+            .start(this)
+    }
+
+    private fun saveImageToGallery(uri: Uri) {
+        val inputStream = contentResolver.openInputStream(uri) ?: return
+
+        val fileName = "IMG_${System.currentTimeMillis()}.jpg"
         val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, name)
+            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.IS_PENDING, 1)
             put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/PestiSafe")
+            put(MediaStore.Images.Media.IS_PENDING, 1)
         }
 
         val resolver = contentResolver
-        val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        val galleryUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
-        uri?.let {
-            resolver.openOutputStream(it)?.use { outStream ->
-                file.inputStream().use { inputStream ->
-                    inputStream.copyTo(outStream)
-                }
+        galleryUri?.let {
+            resolver.openOutputStream(it)?.use { outputStream ->
+                inputStream.copyTo(outputStream)
             }
             values.clear()
             values.put(MediaStore.Images.Media.IS_PENDING, 0)
-            resolver.update(uri, values, null, null)
-            Toast.makeText(this, "Saved to Gallery", Toast.LENGTH_SHORT).show()
+            resolver.update(it, values, null, null)
         }
+
+        inputStream.close()
     }
 
     override fun onRequestPermissionsResult(
@@ -184,12 +218,14 @@ class DetectionActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CAMERA_PERMISSION &&
-            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            dispatchTakePictureIntent()
+
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            when (requestCode) {
+                REQUEST_CAMERA_PERMISSION -> dispatchTakePictureIntent()
+                REQUEST_STORAGE_PERMISSION -> openFilePicker()
+            }
         } else {
-            Toast.makeText(this, "Camera permission is required", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Permission is required", Toast.LENGTH_SHORT).show()
         }
     }
 }

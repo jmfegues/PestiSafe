@@ -9,6 +9,16 @@
     android:textAlignment="center"
     tools:context=".Activity.ProfileActivity">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintBottom_toTopOf="@+id/profiletxt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/backicon" />
+
     <TextView
         android:id="@+id/profiletxt"
         android:layout_width="wrap_content"
