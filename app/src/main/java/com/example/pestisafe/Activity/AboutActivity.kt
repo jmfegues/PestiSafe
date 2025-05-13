@@ -1,7 +1,6 @@
 package com.example.pestisafe.Activity
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pestisafe.R
 import com.example.pestisafe.databinding.ActivityAboutBinding
@@ -15,7 +14,6 @@ class AboutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAboutBinding.inflate(layoutInflater)
-        enableEdgeToEdge()
         setContentView(binding.root)
 
         val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)

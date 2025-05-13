@@ -54,10 +54,11 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailaddtxtin"
         android:layout_width="280dp"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:textColorHint="@color/darkGreen"
+        android:textColorHint="#009688"
         app:boxStrokeColor="@color/darkGreen"
+        app:helperTextTextColor="@color/darkGreen"
         app:hintTextColor="@color/darkGreen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,6 +70,8 @@
             android:layout_height="match_parent"
             android:hint="@string/email_address"
             android:textColor="@color/darkGreen"
+            android:textColorHighlight="@color/darkGreen"
+            android:textColorHint="@color/darkGreen"
             android:textColorLink="@color/darkGreen" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -76,25 +79,27 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordtxtin"
         android:layout_width="280dp"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:textColorHint="@color/darkGreen"
+        android:textColorHint="#009688"
         app:boxStrokeColor="@color/darkGreen"
         app:hintTextColor="@color/darkGreen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailaddtxtin"
-        app:passwordToggleEnabled="true">
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/darkGreen">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/password"
-            android:textColor="@color/darkGreen"
-            android:textColorLink="@color/darkGreen"
+            android:imeOptions="actionDone"
             android:inputType="textPassword"
-            android:imeOptions="actionDone">
+            android:textColor="@color/darkGreen"
+            android:textColorLink="@color/darkGreen">
+
         </com.google.android.material.textfield.TextInputEditText>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -134,11 +139,12 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="100dp"
+        android:layout_width="84dp"
+        android:layout_height="79dp"
+        android:layout_marginTop="70dp"
         android:contentDescription="@string/app_icon"
         android:scaleType="fitCenter"
+        android:tint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/logintoacc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

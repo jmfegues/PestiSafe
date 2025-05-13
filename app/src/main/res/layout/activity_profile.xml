@@ -15,9 +15,12 @@
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintBottom_toTopOf="@+id/profiletxt"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/backicon" />
+        app:layout_constraintVertical_bias="0.0"
+        app:navigationIcon="@drawable/backicon"
+        app:navigationIconTint="@color/darkGreen"/>
 
     <TextView
         android:id="@+id/profiletxt"
@@ -44,18 +47,23 @@
         app:hintTextColor="@color/darkGreen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profiletxt">
+        app:layout_constraintTop_toBottomOf="@+id/profiletxt"
+        app:startIconTint="@color/darkGreen">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/fullname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/name" />
+            android:hint="@string/name"
+            android:textColor="@color/darkGreen"
+            android:textColorHighlight="@color/darkGreen"
+            android:textColorHint="@color/darkGreen"
+            android:textColorLink="@color/darkGreen"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/txtemailaddp"
+        android:id="@+id/txtinplastname"
         android:layout_width="300dp"
         android:layout_height="55dp"
 
@@ -71,12 +79,16 @@
             android:id="@+id/emailaddp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/email_address" />
+            android:hint="@string/email_address"
+            android:textColor="@color/darkGreen"
+            android:textColorHighlight="@color/darkGreen"
+            android:textColorHint="@color/darkGreen"
+            android:textColorLink="@color/darkGreen"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/txtmobilelno"
+        android:id="@+id/txtemailadd"
         android:layout_width="300dp"
         android:layout_height="55dp"
         android:layout_marginTop="20dp"
@@ -86,18 +98,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtemailaddp">
+        app:layout_constraintTop_toBottomOf="@+id/txtinplastname">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/mobileno"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/mobile_number" />
+            android:hint="@string/mobile_number"
+            android:textColor="@color/darkGreen"
+            android:textColorHighlight="@color/darkGreen"
+            android:textColorHint="@color/darkGreen"
+            android:textColorLink="@color/darkGreen"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/txtcountry"
+        android:id="@+id/txtpassword"
         android:layout_width="300dp"
         android:layout_height="55dp"
         android:layout_marginTop="20dp"
@@ -107,13 +123,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtmobilelno">
+        app:layout_constraintTop_toBottomOf="@+id/txtemailadd">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/country"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/country" />
+            android:hint="@string/country"
+            android:textColor="@color/darkGreen"
+            android:textColorHighlight="@color/darkGreen"
+            android:textColorHint="@color/darkGreen"
+            android:textColorLink="@color/darkGreen"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -132,6 +152,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtcountry" />
+        app:layout_constraintTop_toBottomOf="@+id/txtpassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

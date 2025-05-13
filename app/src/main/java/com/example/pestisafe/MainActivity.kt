@@ -4,25 +4,28 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.example.pestisafe.Activity.AboutActivity
 import com.example.pestisafe.Activity.DetectionActivity
-import com.example.pestisafe.databinding.ActivityMainBinding
-import androidx.core.net.toUri
+import com.example.pestisafe.Activity.LogInActivity
 import com.example.pestisafe.Activity.ProfileActivity
+import com.example.pestisafe.databinding.ActivityMainBinding
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
-        enableEdgeToEdge()
         setContentView(binding.root)
+
+        mAuth = FirebaseAuth.getInstance()
 
         binding.cvdetection.setOnClickListener {
             val intent = Intent(this@MainActivity, DetectionActivity::class.java)
@@ -50,7 +53,6 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -73,7 +75,32 @@ class MainActivity : AppCompatActivity() {
                 startActivity(profileIntent)
                 true
             }
+            R.id.nav_logout -> {
+                // Show log out confirmation dialog
+                showLogoutConfirmationDialog()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun showLogoutConfirmationDialog() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Log Out")
+            .setMessage("Are you sure you want to log out?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { _, _ ->
+                // Perform logout action
+                mAuth.signOut()
+                val intent = Intent(this, LogInActivity::class.java)
+                startActivity(intent)
+                finish() // Close the MainActivity after logout
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss() // Dismiss the dialog if "No" is clicked
+            }
+            .create()
+
+        dialog.show()
     }
 }

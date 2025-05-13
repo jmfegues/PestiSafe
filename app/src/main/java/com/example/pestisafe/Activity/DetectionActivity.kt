@@ -14,8 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.example.pestisafe.R
 import com.example.pestisafe.databinding.ActivityDetectionBinding
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.yalantis.ucrop.UCrop
 import java.io.File
 import java.io.IOException
@@ -40,50 +42,30 @@ class DetectionActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Toolbar setup
-        val toolbar = findViewById<MaterialToolbar>(com.example.pestisafe.R.id.topAppBar)
+        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
         toolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // Camera button
-        binding.cameratxt.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.CAMERA),
-                    REQUEST_CAMERA_PERMISSION
-                )
-            } else {
-                dispatchTakePictureIntent()
+        // Bottom Navigation setup
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_upload -> {
+                    checkStoragePermissionAndPickFile()
+                    true
+                }
+                R.id.nav_camera -> {
+                    checkCameraPermissionAndOpenCamera()
+                    true
+                }
+                else -> false
             }
         }
 
-        // File upload button
-        binding.fileuploadtxt.setOnClickListener {
-            val storagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Manifest.permission.READ_MEDIA_IMAGES
-            } else {
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            }
-
-            if (ContextCompat.checkSelfPermission(this, storagePermission)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(storagePermission),
-                    REQUEST_STORAGE_PERMISSION
-                )
-            } else {
-                openFilePicker()
-            }
-        }
-
-        // Image preview click
+        // Image preview
         binding.capturedimage.setOnClickListener {
             lastSavedImageUri?.let { uri ->
                 val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -92,6 +74,32 @@ class DetectionActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             }
+        }
+    }
+
+    private fun checkCameraPermissionAndOpenCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+        } else {
+            dispatchTakePictureIntent()
+        }
+    }
+
+    private fun checkStoragePermissionAndPickFile() {
+        val storagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        if (ContextCompat.checkSelfPermission(this, storagePermission)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(storagePermission), REQUEST_STORAGE_PERMISSION)
+        } else {
+            openFilePicker()
         }
     }
 
@@ -122,8 +130,7 @@ class DetectionActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
-        val timeStamp: String =
-            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "JPEG_${timeStamp}_"
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(imageFileName, ".jpg", storageDir!!).apply {
@@ -148,9 +155,7 @@ class DetectionActivity : AppCompatActivity() {
                 }
 
                 REQUEST_FILE_PICK -> {
-                    data?.data?.let { uri ->
-                        startCrop(uri)
-                    }
+                    data?.data?.let { uri -> startCrop(uri) }
                 }
 
                 UCrop.REQUEST_CROP -> {
@@ -170,9 +175,7 @@ class DetectionActivity : AppCompatActivity() {
     }
 
     private fun startCrop(sourceUri: Uri) {
-        val destinationUri =
-            Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
-
+        val destinationUri = Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
         val options = UCrop.Options().apply {
             setFreeStyleCropEnabled(true)
             setHideBottomControls(false)

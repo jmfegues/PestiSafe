@@ -3,7 +3,6 @@ package com.example.pestisafe.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pestisafe.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -18,7 +17,6 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
-        enableEdgeToEdge()
         setContentView(binding.root)
 
         mAuth = FirebaseAuth.getInstance()
@@ -29,12 +27,19 @@ class SignUpActivity : AppCompatActivity() {
             val lname = binding.lastname.text.toString()
             val email = binding.emailadd.text.toString()
             val password = binding.password.text.toString()
+            val confirmPassword = binding.confpassword.text.toString()
 
             // Validate input
-            if (email.isNotEmpty() && password.isNotEmpty() && fname.isNotEmpty() && lname.isNotEmpty()) {
+            if (fname.isNotEmpty() && lname.isNotEmpty() &&
+                email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
 
                 if (password.length < 6) {
-                    binding.password.error = "Password must be at least 6 characters"
+                    Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (password != confirmPassword) {
+                    Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
@@ -59,6 +64,7 @@ class SignUpActivity : AppCompatActivity() {
                             Toast.makeText(applicationContext, "Registration Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
+
             } else {
                 Toast.makeText(this, "Complete all fields.", Toast.LENGTH_SHORT).show()
             }

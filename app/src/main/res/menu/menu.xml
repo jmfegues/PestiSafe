@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_about"
-        android:icon="@drawable/abouticon"
-        android:title="@string/about"
-        app:iconTint="@color/darkGreen"
-        app:showAsAction="ifRoom"/>
-
-    <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/profileicon"
         android:title="@string/profile"
@@ -17,9 +10,17 @@
         app:showAsAction="ifRoom"/>
 
     <item
+        android:id="@+id/nav_about"
+        android:icon="@drawable/abouticon"
+        android:title="@string/about"
+        app:iconTint="@color/darkGreen"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/nav_logout"
         android:title="@string/log_out"
         app:iconTint="@color/darkGreen"
-        app:showAsAction="never"/>
+        android:icon="@drawable/logouticon"
+        app:showAsAction="ifRoom"/>
 
 </menu>

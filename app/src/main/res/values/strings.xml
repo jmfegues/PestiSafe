@@ -49,4 +49,5 @@
     <string name="todo">TODO</string>
     <string name="app_icon">App Icon</string>
     <string name="log_out">Log Out</string>
+    <string name="confirm_password">Confirm Password</string>
 </resources>
