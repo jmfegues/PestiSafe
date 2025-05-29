@@ -1,14 +1,16 @@
 package com.example.pestisafe.Activity
 
 import android.Manifest
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -18,11 +20,16 @@ import com.example.pestisafe.R
 import com.example.pestisafe.databinding.ActivityDetectionBinding
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.button.MaterialButton
 import com.yalantis.ucrop.UCrop
-import java.io.File
-import java.io.IOException
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.asRequestBody
+import org.json.JSONObject
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class DetectionActivity : AppCompatActivity() {
 
@@ -30,6 +37,9 @@ class DetectionActivity : AppCompatActivity() {
     private lateinit var photoURI: Uri
     private var currentPhotoPath: String = ""
     private var lastSavedImageUri: Uri? = null
+    private lateinit var progressDialog: ProgressDialog
+
+    private lateinit var buttonDetect: MaterialButton
 
     private val REQUEST_IMAGE_CAPTURE = 1
     private val REQUEST_FILE_PICK = 2
@@ -41,7 +51,6 @@ class DetectionActivity : AppCompatActivity() {
         binding = ActivityDetectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Toolbar setup
         val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
@@ -49,7 +58,6 @@ class DetectionActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // Bottom Navigation setup
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -65,7 +73,17 @@ class DetectionActivity : AppCompatActivity() {
             }
         }
 
-        // Image preview
+        buttonDetect = findViewById(R.id.buttonDetect)
+        buttonDetect.isEnabled = false
+        buttonDetect.visibility = View.GONE
+        buttonDetect.setOnClickListener {
+            lastSavedImageUri?.let { uri ->
+                val file = File(getRealPathFromURI(uri) ?: "")
+                if (file.exists()) uploadImage(file)
+                else Toast.makeText(this, "Image file not found.", Toast.LENGTH_SHORT).show()
+            } ?: Toast.makeText(this, "No image to detect.", Toast.LENGTH_SHORT).show()
+        }
+
         binding.capturedimage.setOnClickListener {
             lastSavedImageUri?.let { uri ->
                 val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -74,6 +92,12 @@ class DetectionActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             }
+        }
+
+        progressDialog = ProgressDialog(this).apply {
+            setTitle("Uploading Image")
+            setMessage("Please wait...")
+            setCancelable(false)
         }
     }
 
@@ -101,6 +125,21 @@ class DetectionActivity : AppCompatActivity() {
         } else {
             openFilePicker()
         }
+    }
+
+    private fun startCrop(sourceUri: Uri) {
+        val destinationUri = Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
+        val options = UCrop.Options().apply {
+            setFreeStyleCropEnabled(true)
+            setHideBottomControls(false)
+            setCompressionQuality(80)
+        }
+
+        UCrop.of(sourceUri, destinationUri)
+            .withOptions(options)
+            .withAspectRatio(0f, 0f)
+            .withMaxResultSize(1080, 1080)
+            .start(this)
     }
 
     private fun dispatchTakePictureIntent() {
@@ -153,17 +192,14 @@ class DetectionActivity : AppCompatActivity() {
                     val imageUri = Uri.fromFile(File(currentPhotoPath))
                     startCrop(imageUri)
                 }
-
                 REQUEST_FILE_PICK -> {
                     data?.data?.let { uri -> startCrop(uri) }
                 }
-
                 UCrop.REQUEST_CROP -> {
                     val resultUri = UCrop.getOutput(data!!)
                     resultUri?.let {
                         binding.capturedimage.setImageURI(it)
                         saveImageToGallery(it)
-                        lastSavedImageUri = it
                     }
                 }
             }
@@ -174,45 +210,144 @@ class DetectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun startCrop(sourceUri: Uri) {
-        val destinationUri = Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
-        val options = UCrop.Options().apply {
-            setFreeStyleCropEnabled(true)
-            setHideBottomControls(false)
-            setCompressionQuality(80)
-        }
+    private fun saveImageToGallery(uri: Uri) {
+        try {
+            val inputStream = contentResolver.openInputStream(uri)
+            val filename = "PestiSafe_${System.currentTimeMillis()}.jpg"
 
-        UCrop.of(sourceUri, destinationUri)
-            .withOptions(options)
-            .withAspectRatio(0f, 0f)
-            .withMaxResultSize(1080, 1080)
-            .start(this)
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/PestiSafe")
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+            }
+
+            val resolver = contentResolver
+            val imageCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            } else {
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            }
+
+            val imageUri = resolver.insert(imageCollection, contentValues)
+
+            imageUri?.let { savedUri ->
+                val outputStream = resolver.openOutputStream(savedUri)
+                inputStream?.copyTo(outputStream!!)
+                outputStream?.close()
+                inputStream?.close()
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    contentValues.clear()
+                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    resolver.update(savedUri, contentValues, null, null)
+                }
+
+                lastSavedImageUri = savedUri
+                buttonDetect.visibility = View.VISIBLE
+                buttonDetect.isEnabled = true
+                Toast.makeText(this, "Image saved. Tap Detect to upload.", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error saving image: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    private fun saveImageToGallery(uri: Uri) {
-        val inputStream = contentResolver.openInputStream(uri) ?: return
-
-        val fileName = "IMG_${System.currentTimeMillis()}.jpg"
-        val values = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/PestiSafe")
-            put(MediaStore.Images.Media.IS_PENDING, 1)
-        }
-
-        val resolver = contentResolver
-        val galleryUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-
-        galleryUri?.let {
-            resolver.openOutputStream(it)?.use { outputStream ->
-                inputStream.copyTo(outputStream)
+    private fun getRealPathFromURI(uri: Uri): String? {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+            val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            if (cursor.moveToFirst()) {
+                return cursor.getString(columnIndex)
             }
-            values.clear()
-            values.put(MediaStore.Images.Media.IS_PENDING, 0)
-            resolver.update(it, values, null, null)
+        }
+        return uri.path
+    }
+
+    private fun uploadImage(imageFile: File) {
+        progressDialog.show()
+
+        val mediaType = when (imageFile.extension.lowercase()) {
+            "jpg", "jpeg" -> "image/jpeg".toMediaTypeOrNull()
+            "png" -> "image/png".toMediaTypeOrNull()
+            else -> {
+                Toast.makeText(this, "Unsupported file type", Toast.LENGTH_LONG).show()
+                progressDialog.dismiss()
+                return
+            }
         }
 
-        inputStream.close()
+        val fileBody = imageFile.asRequestBody(mediaType)
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", imageFile.name, fileBody)
+            .build()
+
+        val request = Request.Builder()
+            .url("https://pestisafe-api-539738895234.us-central1.run.app/predict/")
+            .post(requestBody)
+            .build()
+
+        val client = OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    progressDialog.dismiss()
+                    showRetryDialog("Upload failed: ${e.message}", imageFile)
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    progressDialog.dismiss()
+                    val responseBody = response.body?.string()
+
+                    if (response.isSuccessful && !responseBody.isNullOrEmpty()) {
+                        try {
+                            val jsonResponse = JSONObject(responseBody)
+                            val predictionClass = jsonResponse.getString("class")
+                            val condition = jsonResponse.getString("condition")
+                            val message = jsonResponse.getString("message")
+
+                            val intent = Intent(this@DetectionActivity, ResultActivity::class.java).apply {
+                                putExtra("class", predictionClass)
+                                putExtra("condition", condition)
+                                putExtra("message", message)
+                                lastSavedImageUri?.let { putExtra("imageUri", it.toString()) }
+                            }
+                            startActivity(intent)
+                        } catch (e: Exception) {
+                            showRetryDialog("Error parsing prediction result.", imageFile)
+                        }
+                    } else {
+                        showRetryDialog("No prediction available from server.", imageFile)
+                    }
+                }
+            }
+        })
+    }
+
+    private fun showRetryDialog(message: String, imageFile: File) {
+        AlertDialog.Builder(this)
+            .setTitle("Error")
+            .setMessage("$message\nWould you like to retry?")
+            .setPositiveButton("Retry") { dialog, _ ->
+                dialog.dismiss()
+                uploadImage(imageFile)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .show()
     }
 
     override fun onRequestPermissionsResult(

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.example.pestisafe.Activity.AboutActivity
 import com.example.pestisafe.Activity.DetectionActivity
+import com.example.pestisafe.Activity.HistoryActivity
 import com.example.pestisafe.Activity.LogInActivity
 import com.example.pestisafe.Activity.ProfileActivity
 import com.example.pestisafe.databinding.ActivityMainBinding
@@ -29,6 +30,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.cvdetection.setOnClickListener {
             val intent = Intent(this@MainActivity, DetectionActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.cvhistory.setOnClickListener {
+            val intent = Intent(this@MainActivity, HistoryActivity::class.java)
             startActivity(intent)
         }
 
