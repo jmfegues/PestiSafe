@@ -4,9 +4,11 @@ import java.io.Serializable
 
 data class ResultHistory(
     val id: String = "",
-    val title: String = "", // <-- Added field
+    val title: String = "",
     val predictionClass: String = "",
     val condition: String = "",
+    val residueRange: String = "",       // <-- NEW
+    val pesticide: String = "",          // <-- NEW
     val message: String = "",
     val imageBase64: String = "",
     val timestamp: Long = 0L

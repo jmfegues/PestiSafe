@@ -84,4 +84,7 @@
     <string name="condition">Condition</string>
     <string name="date">Date</string>
     <string name="detection_results">Detection Results</string>
+    <string name="continuetxt">Continue</string>
+    <string name="pesticide_class_active_ingredient">Pesticide Class (Active Ingredient): –</string>
+    <string name="residue_range">Residue Range: –</string>
 </resources>

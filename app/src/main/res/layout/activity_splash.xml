@@ -31,7 +31,7 @@
         android:layout_marginEnd="161dp"
         android:layout_marginBottom="91dp"
         android:backgroundTint="@android:color/white"
-        android:text="@string/get_started"
+        android:text="@string/continuetxt"
         android:textAlignment="center"
         android:textColor="@color/darkGreen"
         android:textSize="20sp"

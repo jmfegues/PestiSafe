@@ -22,8 +22,8 @@ class HistoryAdapter(
         val imgResult: ImageView = itemView.findViewById(R.id.imageView)
         val txtTitle: TextView = itemView.findViewById(R.id.textTitle)
         val btnRename: ImageView = itemView.findViewById(R.id.btnRename)
-        val txtClass: TextView = itemView.findViewById(R.id.textClass)
         val txtCondition: TextView = itemView.findViewById(R.id.textCondition)
+        val txtResidueRange: TextView = itemView.findViewById(R.id.textResidueRange)
         val txtDate: TextView = itemView.findViewById(R.id.textDate)
         val btnDelete: ImageView = itemView.findViewById(R.id.btnDelete)
     }
@@ -49,14 +49,17 @@ class HistoryAdapter(
             holder.imgResult.setImageResource(android.R.color.darker_gray)
         }
 
-        // Use display title from model
+        // Bind data
         holder.txtTitle.text = item.getDisplayTitle()
-        holder.txtClass.text = item.predictionClass
         holder.txtCondition.text = item.condition
+        holder.txtResidueRange.text = "Residue: ${item.residueRange}"
         holder.txtDate.text = SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault())
             .format(Date(item.timestamp))
 
+        // Buttons
         holder.btnDelete.setOnClickListener { onDeleteClick(item) }
+        holder.btnRename.setOnClickListener { onEditTitleClicked(item) }
+        holder.txtTitle.setOnClickListener { onEditTitleClicked(item) }
 
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
@@ -64,15 +67,6 @@ class HistoryAdapter(
                 putExtra("result", item)
             }
             context.startActivity(intent)
-        }
-
-        // Let activity handle renaming
-        holder.btnRename.setOnClickListener {
-            onEditTitleClicked(item)
-        }
-
-        holder.txtTitle.setOnClickListener {
-            onEditTitleClicked(item)
         }
     }
 

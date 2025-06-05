@@ -94,7 +94,7 @@ class HistoryActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("results").child(item.id)
         ref.removeValue().addOnSuccessListener {
             Toast.makeText(this, "Deleted history item", Toast.LENGTH_SHORT).show()
-            deleteLocalPdfFile(item.title)
+            deleteLocalPdfFile(item.getDisplayTitle())
         }.addOnFailureListener {
             Toast.makeText(this, "Failed to delete item", Toast.LENGTH_SHORT).show()
         }
@@ -108,7 +108,7 @@ class HistoryActivity : AppCompatActivity() {
                     for (child in snapshot.children) {
                         val result = child.getValue(ResultHistory::class.java)
                         if (result != null) {
-                            tempList.add(result)
+                            tempList.add(result.copy(id = child.key ?: ""))
                         }
                     }
                     fullList = tempList.sortedByDescending { it.timestamp }
@@ -156,7 +156,7 @@ class HistoryActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("results").child(item.id)
         ref.child("title").setValue(newTitle).addOnSuccessListener {
             Toast.makeText(this, "Title updated", Toast.LENGTH_SHORT).show()
-            renameLocalPdfFile(item.title, newTitle)
+            renameLocalPdfFile(item.getDisplayTitle(), newTitle)
             val updatedList = fullList.map {
                 if (it.id == item.id) it.copy(title = newTitle) else it
             }

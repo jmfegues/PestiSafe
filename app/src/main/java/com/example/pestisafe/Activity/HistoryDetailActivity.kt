@@ -4,9 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.graphics.*
 import android.graphics.pdf.PdfDocument
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -28,274 +26,181 @@ import java.util.*
 
 class HistoryDetailActivity : AppCompatActivity() {
 
+    // model
     private lateinit var result: ResultHistory
 
+    // views
     private lateinit var resultImageView: ImageView
     private lateinit var resultClassText: TextView
     private lateinit var resultConditionText: TextView
+    private lateinit var resultResidueRangeText: TextView
+    private lateinit var resultPesticideText: TextView
     private lateinit var resultMessageText: TextView
     private lateinit var resultTimestampText: TextView
     private lateinit var btnExportPdf: Button
     private lateinit var btnDelete: Button
 
     private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                exportResultAsPdf()
-            } else {
-                Toast.makeText(this, "Storage permission is required to save PDF", Toast.LENGTH_SHORT).show()
-            }
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) exportResultAsPdf()
+            else Toast.makeText(this, "Storage permission is required to save PDF", Toast.LENGTH_SHORT).show()
         }
+
+    /* ───────────────────────────────────── */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history_detail)
 
-        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener { finish() }
+        findViewById<MaterialToolbar>(R.id.topAppBar).setNavigationOnClickListener { finish() }
 
-        resultImageView = findViewById(R.id.resultImageView)
-        resultClassText = findViewById(R.id.resultClassText)
-        resultConditionText = findViewById(R.id.resultConditionText)
-        resultMessageText = findViewById(R.id.resultMessageText)
-        resultTimestampText = findViewById(R.id.resultTimestampText)
-        btnExportPdf = findViewById(R.id.buttonExportPdf)
-        btnDelete = findViewById(R.id.buttonDelete)
+        // bind views
+        resultImageView       = findViewById(R.id.resultImageView)
+        resultClassText       = findViewById(R.id.resultClassText)
+        resultConditionText   = findViewById(R.id.resultConditionText)
+        resultResidueRangeText= findViewById(R.id.resultResidueRangeText)
+        resultPesticideText   = findViewById(R.id.resultPesticideText)
+        resultMessageText     = findViewById(R.id.resultMessageText)
+        resultTimestampText   = findViewById(R.id.resultTimestampText)
+        btnExportPdf          = findViewById(R.id.buttonExportPdf)
+        btnDelete             = findViewById(R.id.buttonDelete)
 
         result = intent.getSerializableExtra("result") as ResultHistory
 
         displayResultDetails()
 
-        btnExportPdf.setOnClickListener {
-            checkPermissionsAndExportPdf()
-        }
-
-        btnDelete.setOnClickListener {
-            confirmDelete()
-        }
+        btnExportPdf.setOnClickListener { checkPermissionsAndExportPdf() }
+        btnDelete.setOnClickListener   { confirmDelete() }
     }
+
+    /* ─────────── Display model ─────────── */
 
     private fun displayResultDetails() {
-        if (!result.imageBase64.isNullOrEmpty()) {
+        // image
+        if (result.imageBase64.isNotEmpty()) {
             try {
-                val imageBytes = Base64.decode(result.imageBase64, Base64.DEFAULT)
-                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                resultImageView.setImageBitmap(bitmap)
-            } catch (e: Exception) {
+                val bytes = Base64.decode(result.imageBase64, Base64.DEFAULT)
+                val bmp   = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                resultImageView.setImageBitmap(bmp)
+            } catch (_: Exception) {
                 resultImageView.setImageResource(android.R.color.darker_gray)
             }
-        } else {
-            resultImageView.setImageResource(android.R.color.darker_gray)
-        }
+        } else resultImageView.setImageResource(android.R.color.darker_gray)
 
-        resultClassText.text = "Classification: ${result.predictionClass}"
-        resultConditionText.text = "Condition: ${result.condition}"
-        resultMessageText.text = result.message
-
-        val formattedDate = SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date(result.timestamp))
-        resultTimestampText.text = "Scanned on: $formattedDate"
+        // text fields
+        resultClassText.text        = "Classification: ${result.predictionClass}"
+        resultConditionText.text    = "Condition: ${result.condition}"
+        resultResidueRangeText.text = "Residue Range: ${result.residueRange}"
+        resultPesticideText.text    = "Pesticide: ${result.pesticide}"
+        resultMessageText.text      = result.message
+        resultTimestampText.text    = "Scanned on: " +
+                SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date(result.timestamp))
     }
+
+    /* ─────────── Permissions ─────────── */
 
     private fun checkPermissionsAndExportPdf() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            exportResultAsPdf()
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            when {
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == android.content.pm.PackageManager.PERMISSION_GRANTED -> {
-                    exportResultAsPdf()
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
-                    Toast.makeText(this, "Storage permission needed to save PDF", Toast.LENGTH_SHORT).show()
-                    requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-                else -> {
-                    requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            }
-        } else {
-            exportResultAsPdf()
+            exportResultAsPdf(); return
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            when {
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                        android.content.pm.PackageManager.PERMISSION_GRANTED -> exportResultAsPdf()
+                shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) ->
+                    Toast.makeText(this, "Storage permission needed to save PDF", Toast.LENGTH_SHORT).show()
+                        .also { requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
+                else -> requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        } else exportResultAsPdf()
     }
+
+    /* ─────────── PDF export ─────────── */
 
     private fun exportResultAsPdf() {
-        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            textSize = 16f
-            color = Color.BLACK
+        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 16f; color = Color.BLACK }
+        val pageW = 595; val pageH = 842; val margin = 72; val usableW = pageW - 2*margin
+
+        val pdf = PdfDocument()
+        var pageNo = 1
+        var y = margin.toFloat()
+        var page = pdf.startPage(PdfDocument.PageInfo.Builder(pageW, pageH, pageNo).create())
+        var canvas = page.canvas
+
+        fun newPage() { pdf.finishPage(page); pageNo++
+            page = pdf.startPage(PdfDocument.PageInfo.Builder(pageW, pageH, pageNo).create())
+            canvas = page.canvas; y = margin.toFloat()
         }
 
-        val pageWidth = 595  // A4 width in points
-        val pageHeight = 842 // A4 height in points
-        val margin = 72      // 1 inch margin (72 points = 1 inch)
-        val usableWidth = pageWidth - 2 * margin
+        fun ensureSpace(h: Float) { if (y+h > pageH-margin) newPage() }
 
-        val pdfDocument = PdfDocument()
-        var pageNumber = 1
-        var yPosition = margin.toFloat()
+        fun drawLbl(lbl: String) { paint.isFakeBoldText = true
+            canvas.drawText(lbl, margin.toFloat(), y, paint); paint.isFakeBoldText = false; y += 20f }
 
-        fun startNewPage(): Pair<PdfDocument.Page, Canvas> {
-            val pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber++).create()
-            val page = pdfDocument.startPage(pageInfo)
-            return Pair(page, page.canvas)
+        fun drawText(text: String) {
+            val sl = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                StaticLayout.Builder.obtain(text,0,text.length,paint,usableW)
+                    .setAlignment(Layout.Alignment.ALIGN_NORMAL).build()
+            else
+                StaticLayout(text,paint,usableW,Layout.Alignment.ALIGN_NORMAL,1f,0f,false)
+            ensureSpace(sl.height.toFloat()); canvas.save()
+            canvas.translate(margin.toFloat(), y); sl.draw(canvas); canvas.restore(); y += sl.height+20f
         }
 
-        var (page, canvas) = startNewPage()
+        // title
+        paint.textSize = 24f; paint.isFakeBoldText = true
+        canvas.drawText("Detection Result", margin.toFloat(), y, paint)
+        paint.isFakeBoldText = false; paint.textSize = 16f; y += 40f
 
-        fun checkForNewPage(height: Float): Boolean {
-            if (yPosition + height > pageHeight - margin) {
-                pdfDocument.finishPage(page)
-                val newPage = startNewPage()
-                page = newPage.first
-                canvas = newPage.second
-                yPosition = margin.toFloat()
-                return true
-            }
-            return false
-        }
-
-        fun drawLabel(label: String) {
-            paint.isFakeBoldText = true
-            canvas.drawText(label, margin.toFloat(), yPosition, paint)
-            paint.isFakeBoldText = false
-            yPosition += 20f
-        }
-
-        fun drawWrappedText(text: String) {
-            val layout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                StaticLayout.Builder.obtain(text, 0, text.length, paint, usableWidth)
-                    .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-                    .setLineSpacing(0f, 1f)
-                    .setIncludePad(false)
-                    .build()
-            } else {
-                StaticLayout(text, paint, usableWidth, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false)
-            }
-
-            checkForNewPage(layout.height.toFloat())
-            canvas.save()
-            canvas.translate(margin.toFloat(), yPosition)
-            layout.draw(canvas)
-            canvas.restore()
-            yPosition += layout.height + 20f
-        }
-
-        // Draw Title: "Detection Result"
-        paint.textSize = 24f
-        paint.isFakeBoldText = true
-        checkForNewPage(30f)
-        canvas.drawText("Detection Result", margin.toFloat(), yPosition, paint)
-        paint.isFakeBoldText = false
-        paint.textSize = 16f
-        yPosition += 40f
-
-        // Draw image (150x150)
-        if (!result.imageBase64.isNullOrEmpty()) {
+        // image
+        if (result.imageBase64.isNotEmpty()) {
             try {
-                val imageBytes = Base64.decode(result.imageBase64, Base64.DEFAULT)
-                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-
-                val targetWidth = 150
-                val targetHeight = 150
-
-                val scaledBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true)
-
-                if (checkForNewPage(targetHeight + 20f)) {
-                    // Page changed, yPosition reset
-                }
-                canvas.drawBitmap(scaledBitmap, margin.toFloat(), yPosition, null)
-                yPosition += targetHeight + 20f
-            } catch (e: Exception) {
-                drawWrappedText("Failed to load image.")
-            }
-        } else {
-            drawWrappedText("No image available.")
+                val bmp = BitmapFactory.decodeByteArray(
+                    Base64.decode(result.imageBase64, Base64.DEFAULT),0,
+                    Base64.decode(result.imageBase64, Base64.DEFAULT).size)
+                val img = Bitmap.createScaledBitmap(bmp,150,150,true)
+                ensureSpace(170f); canvas.drawBitmap(img, margin.toFloat(), y, null); y += 170f
+            } catch (_: Exception) { drawText("Image unavailable.") }
         }
 
-        // Draw date below image
-        drawLabel("Date:")
-        val formattedDate = SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date(result.timestamp))
-        drawWrappedText(formattedDate)
+        // date
+        drawLbl("Date:")
+        drawText(SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date(result.timestamp)))
 
-        // Draw detection details
-        drawLabel("Classification:")
-        drawWrappedText(result.predictionClass)
+        drawLbl("Classification:");  drawText(result.predictionClass)
+        drawLbl("Condition:");       drawText(result.condition)
+        drawLbl("Residue Range:");   drawText(result.residueRange)
+        drawLbl("Pesticide:");       drawText(result.pesticide)
+        drawLbl("Message:");         drawText(result.message)
 
-        drawLabel("Condition:")
-        drawWrappedText(result.condition)
+        pdf.finishPage(page)
 
-        drawLabel("Message:")
-        drawWrappedText(result.message)
+        val fname = "PestiSafe_${result.predictionClass.replace("\\W+".toRegex(), "_")}_${System.currentTimeMillis()}.pdf"
+        val outDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val outFile = File(outDir, fname)
 
-        pdfDocument.finishPage(page)
-
-        val sanitizedClass = result.predictionClass.replace("\\W+".toRegex(), "_")
-        val fileName = "PestiSafe_${sanitizedClass}_${System.currentTimeMillis()}.pdf"
-        val downloadsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val file = File(downloadsPath, fileName)
-
-        try {
-            pdfDocument.writeTo(FileOutputStream(file))
-            Toast.makeText(this, "PDF saved to Downloads/$fileName", Toast.LENGTH_LONG).show()
+        try { pdf.writeTo(FileOutputStream(outFile))
+            Toast.makeText(this,"PDF saved to Downloads/$fname",Toast.LENGTH_LONG).show()
         } catch (e: IOException) {
-            Toast.makeText(this, "Error saving PDF: ${e.message}", Toast.LENGTH_LONG).show()
-        } finally {
-            pdfDocument.close()
-        }
+            Toast.makeText(this,"Error saving PDF: ${e.message}",Toast.LENGTH_LONG).show()
+        } finally { pdf.close() }
     }
 
-    @Suppress("DEPRECATION")
-    private fun drawMultilineText(text: String, canvas: Canvas, x: Float, y: Float, paint: TextPaint, maxWidth: Int) {
-        val layout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            StaticLayout.Builder.obtain(text, 0, text.length, paint, maxWidth)
-                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-                .setLineSpacing(0f, 1f)
-                .setIncludePad(false)
-                .build()
-        } else {
-            StaticLayout(text, paint, maxWidth, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false)
-        }
-
-        canvas.save()
-        canvas.translate(x, y)
-        layout.draw(canvas)
-        canvas.restore()
-    }
+    /* ─────────── Delete ─────────── */
 
     private fun confirmDelete() {
         AlertDialog.Builder(this)
-            .setTitle("Delete Result")
-            .setMessage("Are you sure you want to delete this?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                deleteResult()
-                dialog.dismiss()
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+            .setTitle("Delete Result").setMessage("Are you sure you want to delete this?")
+            .setPositiveButton("Yes") { d,_ -> deleteResult(); d.dismiss() }
+            .setNegativeButton("No")  { d,_ -> d.dismiss() }.show()
     }
 
     private fun deleteResult() {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
-        if (uid == null) {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val ref = FirebaseDatabase.getInstance().reference
-            .child("users")
-            .child(uid)
-            .child("results")
-            .child(result.id)
-
-        ref.removeValue()
-            .addOnSuccessListener {
-                Toast.makeText(this, "Deleted successfully", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to delete", Toast.LENGTH_SHORT).show()
-            }
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseDatabase.getInstance().reference
+            .child("users").child(uid).child("results").child(result.id)
+            .removeValue()
+            .addOnSuccessListener { Toast.makeText(this,"Deleted",Toast.LENGTH_SHORT).show(); finish() }
+            .addOnFailureListener { Toast.makeText(this,"Failed to delete",Toast.LENGTH_SHORT).show() }
     }
 }

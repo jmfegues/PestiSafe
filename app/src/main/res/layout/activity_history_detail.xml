@@ -58,6 +58,24 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <!-- NEW: Residue Range -->
+            <TextView
+                android:id="@+id/resultResidueRangeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <!-- NEW: Pesticide Name -->
+            <TextView
+                android:id="@+id/resultPesticideText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/resultMessageText"
                 android:layout_width="wrap_content"
