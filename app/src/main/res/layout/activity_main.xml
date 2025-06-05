@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -77,7 +78,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Card 2: History -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvhistory"
         android:layout_width="280dp"
@@ -126,7 +126,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Additional Info Title -->
     <TextView
         android:id="@+id/addinfotxt"
         android:layout_width="wrap_content"
@@ -140,7 +139,6 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="50dp" />
 
-    <!-- Card 3: Registered Pesticides -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvregspes"
         android:layout_width="300dp"
@@ -189,7 +187,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Card 4: Banned Pesticides -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvbanned"
         android:layout_width="300dp"
@@ -238,7 +235,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Card 5: MRL Values -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvmrl"
         android:layout_width="300dp"

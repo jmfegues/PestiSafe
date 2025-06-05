@@ -87,4 +87,6 @@
     <string name="continuetxt">Continue</string>
     <string name="pesticide_class_active_ingredient">Pesticide Class (Active Ingredient): –</string>
     <string name="residue_range">Residue Range: –</string>
+    <string name="filter_by_date">Filter by Date</string>
+    <string name="clear">Clear</string>
 </resources>

@@ -26,10 +26,8 @@ import java.util.*
 
 class HistoryDetailActivity : AppCompatActivity() {
 
-    // model
     private lateinit var result: ResultHistory
 
-    // views
     private lateinit var resultImageView: ImageView
     private lateinit var resultClassText: TextView
     private lateinit var resultConditionText: TextView
@@ -46,15 +44,12 @@ class HistoryDetailActivity : AppCompatActivity() {
             else Toast.makeText(this, "Storage permission is required to save PDF", Toast.LENGTH_SHORT).show()
         }
 
-    /* ───────────────────────────────────── */
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history_detail)
 
         findViewById<MaterialToolbar>(R.id.topAppBar).setNavigationOnClickListener { finish() }
 
-        // bind views
         resultImageView       = findViewById(R.id.resultImageView)
         resultClassText       = findViewById(R.id.resultClassText)
         resultConditionText   = findViewById(R.id.resultConditionText)
@@ -73,7 +68,6 @@ class HistoryDetailActivity : AppCompatActivity() {
         btnDelete.setOnClickListener   { confirmDelete() }
     }
 
-    /* ─────────── Display model ─────────── */
 
     private fun displayResultDetails() {
         // image
@@ -97,8 +91,6 @@ class HistoryDetailActivity : AppCompatActivity() {
                 SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date(result.timestamp))
     }
 
-    /* ─────────── Permissions ─────────── */
-
     private fun checkPermissionsAndExportPdf() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             exportResultAsPdf(); return
@@ -115,11 +107,15 @@ class HistoryDetailActivity : AppCompatActivity() {
         } else exportResultAsPdf()
     }
 
-    /* ─────────── PDF export ─────────── */
-
     private fun exportResultAsPdf() {
-        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 16f; color = Color.BLACK }
-        val pageW = 595; val pageH = 842; val margin = 72; val usableW = pageW - 2*margin
+        val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = 16f
+            color = Color.BLACK
+        }
+        val pageW = 595
+        val pageH = 842
+        val margin = 72
+        val usableW = pageW - 2 * margin
 
         val pdf = PdfDocument()
         var pageNo = 1
@@ -127,66 +123,101 @@ class HistoryDetailActivity : AppCompatActivity() {
         var page = pdf.startPage(PdfDocument.PageInfo.Builder(pageW, pageH, pageNo).create())
         var canvas = page.canvas
 
-        fun newPage() { pdf.finishPage(page); pageNo++
+        fun newPage() {
+            pdf.finishPage(page)
+            pageNo++
             page = pdf.startPage(PdfDocument.PageInfo.Builder(pageW, pageH, pageNo).create())
-            canvas = page.canvas; y = margin.toFloat()
+            canvas = page.canvas
+            y = margin.toFloat()
         }
 
-        fun ensureSpace(h: Float) { if (y+h > pageH-margin) newPage() }
+        fun ensureSpace(h: Float) {
+            if (y + h > pageH - margin) newPage()
+        }
 
-        fun drawLbl(lbl: String) { paint.isFakeBoldText = true
-            canvas.drawText(lbl, margin.toFloat(), y, paint); paint.isFakeBoldText = false; y += 20f }
+        fun drawLbl(lbl: String) {
+            paint.isFakeBoldText = true
+            canvas.drawText(lbl, margin.toFloat(), y, paint)
+            paint.isFakeBoldText = false
+            y += paint.textSize
+        }
 
         fun drawText(text: String) {
             val sl = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                StaticLayout.Builder.obtain(text,0,text.length,paint,usableW)
-                    .setAlignment(Layout.Alignment.ALIGN_NORMAL).build()
+                StaticLayout.Builder.obtain(text, 0, text.length, paint, usableW)
+                    .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                    .build()
             else
-                StaticLayout(text,paint,usableW,Layout.Alignment.ALIGN_NORMAL,1f,0f,false)
-            ensureSpace(sl.height.toFloat()); canvas.save()
-            canvas.translate(margin.toFloat(), y); sl.draw(canvas); canvas.restore(); y += sl.height+20f
+                StaticLayout(text, paint, usableW, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false)
+
+            ensureSpace(sl.height.toFloat())
+            canvas.save()
+            canvas.translate(margin.toFloat(), y)
+            sl.draw(canvas)
+            canvas.restore()
+
+            y += sl.height
+            y += 20f
         }
 
-        // title
-        paint.textSize = 24f; paint.isFakeBoldText = true
+        paint.textSize = 24f
+        paint.isFakeBoldText = true
         canvas.drawText("Detection Result", margin.toFloat(), y, paint)
-        paint.isFakeBoldText = false; paint.textSize = 16f; y += 40f
+        paint.isFakeBoldText = false
+        paint.textSize = 16f
+        y += 40f
 
-        // image
+        // Image
         if (result.imageBase64.isNotEmpty()) {
             try {
-                val bmp = BitmapFactory.decodeByteArray(
-                    Base64.decode(result.imageBase64, Base64.DEFAULT),0,
-                    Base64.decode(result.imageBase64, Base64.DEFAULT).size)
-                val img = Bitmap.createScaledBitmap(bmp,150,150,true)
-                ensureSpace(170f); canvas.drawBitmap(img, margin.toFloat(), y, null); y += 170f
-            } catch (_: Exception) { drawText("Image unavailable.") }
+                val decodedBytes = Base64.decode(result.imageBase64, Base64.DEFAULT)
+                val bmp = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                val img = Bitmap.createScaledBitmap(bmp, 150, 150, true)
+                ensureSpace(170f)
+                canvas.drawBitmap(img, margin.toFloat(), y, null)
+                y += 170f
+            } catch (_: Exception) {
+                drawText("Image unavailable.")
+            }
         }
 
-        // date
         drawLbl("Date:")
         drawText(SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date(result.timestamp)))
 
-        drawLbl("Classification:");  drawText(result.predictionClass)
-        drawLbl("Condition:");       drawText(result.condition)
-        drawLbl("Residue Range:");   drawText(result.residueRange)
-        drawLbl("Pesticide:");       drawText(result.pesticide)
-        drawLbl("Message:");         drawText(result.message)
+        drawLbl("Classification:")
+        drawText(result.predictionClass)
+
+        drawLbl("Condition:")
+        drawText(result.condition)
+
+        drawLbl("Residue Range:")
+        drawText(result.residueRange)
+
+        drawLbl("Pesticide:")
+        drawText(result.pesticide)
+
+        drawLbl("Message:")
+        drawText(result.message)
 
         pdf.finishPage(page)
 
-        val fname = "PestiSafe_${result.predictionClass.replace("\\W+".toRegex(), "_")}_${System.currentTimeMillis()}.pdf"
+        val fname = if (result.title.isNotBlank()) {
+            result.title.replace("\\W+".toRegex(), "_") + ".pdf"
+        } else {
+            "PestiSafe_${result.predictionClass.replace("\\W+".toRegex(), "_")}_${System.currentTimeMillis()}.pdf"
+        }
         val outDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val outFile = File(outDir, fname)
 
-        try { pdf.writeTo(FileOutputStream(outFile))
-            Toast.makeText(this,"PDF saved to Downloads/$fname",Toast.LENGTH_LONG).show()
+        try {
+            pdf.writeTo(FileOutputStream(outFile))
+            Toast.makeText(this, "PDF saved to Downloads/$fname", Toast.LENGTH_LONG).show()
         } catch (e: IOException) {
-            Toast.makeText(this,"Error saving PDF: ${e.message}",Toast.LENGTH_LONG).show()
-        } finally { pdf.close() }
+            Toast.makeText(this, "Error saving PDF: ${e.message}", Toast.LENGTH_LONG).show()
+        } finally {
+            pdf.close()
+        }
     }
-
-    /* ─────────── Delete ─────────── */
 
     private fun confirmDelete() {
         AlertDialog.Builder(this)

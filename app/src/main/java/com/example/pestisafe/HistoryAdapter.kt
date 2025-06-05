@@ -36,7 +36,6 @@ class HistoryAdapter(
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         val item = historyList[position]
 
-        // Decode base64 image
         if (!item.imageBase64.isNullOrEmpty()) {
             try {
                 val imageBytes = Base64.decode(item.imageBase64, Base64.DEFAULT)
@@ -49,14 +48,12 @@ class HistoryAdapter(
             holder.imgResult.setImageResource(android.R.color.darker_gray)
         }
 
-        // Bind data
         holder.txtTitle.text = item.getDisplayTitle()
         holder.txtCondition.text = item.condition
         holder.txtResidueRange.text = "Residue: ${item.residueRange}"
         holder.txtDate.text = SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault())
             .format(Date(item.timestamp))
 
-        // Buttons
         holder.btnDelete.setOnClickListener { onDeleteClick(item) }
         holder.btnRename.setOnClickListener { onEditTitleClicked(item) }
         holder.txtTitle.setOnClickListener { onEditTitleClicked(item) }

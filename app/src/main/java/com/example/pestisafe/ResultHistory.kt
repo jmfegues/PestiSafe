@@ -7,8 +7,8 @@ data class ResultHistory(
     val title: String = "",
     val predictionClass: String = "",
     val condition: String = "",
-    val residueRange: String = "",       // <-- NEW
-    val pesticide: String = "",          // <-- NEW
+    val residueRange: String = "",
+    val pesticide: String = "",
     val message: String = "",
     val imageBase64: String = "",
     val timestamp: Long = 0L

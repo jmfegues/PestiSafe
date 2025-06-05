@@ -26,16 +26,12 @@ class ResultActivity : AppCompatActivity() {
     private var firebaseDocId: String? = null
     private var progressDialog: ProgressDialog? = null
 
-    /* ───────────────────────────────────────────── */
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        /* Toolbar */
         findViewById<MaterialToolbar>(R.id.topAppBar).setNavigationOnClickListener { finish() }
 
-        /* View refs */
         val resultImage     = findViewById<ImageView>(R.id.resultImageView)
         val resultClassTxt  = findViewById<TextView>(R.id.resultClassText)
         val resultCondTxt   = findViewById<TextView>(R.id.resultConditionText)
@@ -46,7 +42,6 @@ class ResultActivity : AppCompatActivity() {
         val saveButton      = findViewById<Button>(R.id.saveButton)
         val deleteButton    = findViewById<Button>(R.id.deleteButton)
 
-        /* ── Pull extras from intent ───────────────────── */
         val predictionClass = intent.getStringExtra("class")      ?: "N/A"
         val condition       = intent.getStringExtra("condition")  ?: "N/A"
         val residueRange    = intent.getStringExtra("residueRange") ?: "N/A"
@@ -54,13 +49,11 @@ class ResultActivity : AppCompatActivity() {
         val message         = intent.getStringExtra("message")    ?: "—"
         val imageUri        = intent.getStringExtra("imageUri")?.let { Uri.parse(it) }
 
-        /* ── Timestamp label ───────────────────────────── */
         val timestamp   = System.currentTimeMillis()
         val formatted   = SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault())
             .format(Date(timestamp))
         timestampTxt.text = "Scanned on: $formatted"
 
-        /* ── Bind to UI ────────────────────────────────── */
         resultClassTxt.text = "Classification: $predictionClass"
         resultCondTxt.text  = "Condition: $condition"
         resultRangeTxt.text = "Residue Range: $residueRange"
@@ -68,7 +61,6 @@ class ResultActivity : AppCompatActivity() {
         resultMsgTxt.text   = message
         imageUri?.let(resultImage::setImageURI)
 
-        /* ── Save / Delete buttons ─────────────────────── */
         saveButton.setOnClickListener {
             if (!isSaved) {
                 confirmSave {
@@ -108,8 +100,6 @@ class ResultActivity : AppCompatActivity() {
             }
         }
     }
-
-    /* ───────────────── helpers ─────────────────────── */
 
     private fun showLoading(show: Boolean) {
         if (show) {
@@ -155,8 +145,6 @@ class ResultActivity : AppCompatActivity() {
             }
             .show()
 
-    /* ── Firebase persistence ───────────────────────── */
-
     private fun saveResultToFirebase(
         predictionClass: String, condition: String,
         residueRange: String, pesticide: String,
@@ -172,7 +160,6 @@ class ResultActivity : AppCompatActivity() {
         val dbRef       = FirebaseDatabase.getInstance().reference
         val resultId    = dbRef.child("users").child(uid).child("results").push().key ?: return
 
-        /* Optional: encode image for history */
         var imageBase64: String? = null
         var tmpFileToDelete: java.io.File? = null
 
@@ -191,7 +178,6 @@ class ResultActivity : AppCompatActivity() {
             Log.e("ResultActivity", "Image encode failed: ${e.message}")
         }
 
-        /* Build payload */
         val data = mapOf(
             "id"             to resultId,
             "predictionClass" to predictionClass,

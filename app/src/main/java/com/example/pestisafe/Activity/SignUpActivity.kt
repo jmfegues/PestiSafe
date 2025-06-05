@@ -29,7 +29,6 @@ class SignUpActivity : AppCompatActivity() {
             val password = binding.password.text.toString()
             val confirmPassword = binding.confpassword.text.toString()
 
-            // Validate input
             if (fname.isNotEmpty() && lname.isNotEmpty() &&
                 email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
 

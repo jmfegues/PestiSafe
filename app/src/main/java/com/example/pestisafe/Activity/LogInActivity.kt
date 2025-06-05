@@ -28,15 +28,12 @@ class LogInActivity : AppCompatActivity() {
         databaseReference = Firebase.database.reference
         mAuth = Firebase.auth
 
-        // Check if the user is already logged in
         val currentUser = mAuth.currentUser
         if (currentUser != null) {
-            // If the user is authenticated, skip login and go directly to MainActivity
             startActivity(Intent(this@LogInActivity, MainActivity::class.java))
-            finish() // Finish this activity so the user can't go back to it
+            finish()
         }
 
-        // Handle login button click
         binding.loginBtn.setOnClickListener {
             val email = binding.emailadd.text.toString()
             val password = binding.password.text.toString()
@@ -67,13 +64,11 @@ class LogInActivity : AppCompatActivity() {
             }
         }
 
-        // Handle "Don't have an account? Sign up" click
         binding.donthaveanaccsignuptxt.setOnClickListener {
             val intent = Intent(this@LogInActivity, SignUpActivity::class.java)
             startActivity(intent)
         }
 
-        // Handle password field action on "Done" or "Enter" key press
         binding.password.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                 (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {

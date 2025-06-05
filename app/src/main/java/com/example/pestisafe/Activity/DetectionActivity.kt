@@ -46,20 +46,16 @@ class DetectionActivity : AppCompatActivity() {
     private val REQUEST_CAMERA_PERMISSION   = 100
     private val REQUEST_STORAGE_PERMISSION  = 200
 
-    /* ─────────────────────────────────────────── */
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /* Toolbar */
         val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
         toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        /* Bottom nav: choose camera or gallery */
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -69,7 +65,6 @@ class DetectionActivity : AppCompatActivity() {
             }
         }
 
-        /* Detect button – disabled until image saved */
         buttonDetect = findViewById(R.id.buttonDetect)
         buttonDetect.isEnabled = false
         buttonDetect.visibility = View.GONE
@@ -81,7 +76,6 @@ class DetectionActivity : AppCompatActivity() {
             } ?: Toast.makeText(this, "No image to detect.", Toast.LENGTH_SHORT).show()
         }
 
-        /* Tap preview image to open it */
         binding.capturedimage.setOnClickListener {
             lastSavedImageUri?.let { uri ->
                 val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -92,15 +86,12 @@ class DetectionActivity : AppCompatActivity() {
             }
         }
 
-        /* Simple blocking progress dialog */
         progressDialog = ProgressDialog(this).apply {
             setTitle("Uploading Image")
             setMessage("Please wait...")
             setCancelable(false)
         }
     }
-
-    /* ─────────────── Permission helpers ─────────────── */
 
     private fun checkCameraPermissionAndOpenCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -125,8 +116,6 @@ class DetectionActivity : AppCompatActivity() {
         } else openFilePicker()
     }
 
-    /* ─────────────── Camera & gallery ─────────────── */
-
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (takePictureIntent.resolveActivity(packageManager) != null) {
@@ -147,8 +136,6 @@ class DetectionActivity : AppCompatActivity() {
         startActivityForResult(Intent.createChooser(intent, "Select Image"), REQUEST_FILE_PICK)
     }
 
-    /* ─────────────── UCrop ─────────────── */
-
     private fun startCrop(sourceUri: Uri) {
         val destinationUri = Uri.fromFile(File(cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
         val options = UCrop.Options().apply {
@@ -162,8 +149,6 @@ class DetectionActivity : AppCompatActivity() {
             .withMaxResultSize(1080, 1080)
             .start(this)
     }
-
-    /* ─────────────── onActivityResult ─────────────── */
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -185,8 +170,6 @@ class DetectionActivity : AppCompatActivity() {
             Toast.makeText(this, "Crop failed: ${err?.message}", Toast.LENGTH_LONG).show()
         }
     }
-
-    /* ─────────────── File helpers ─────────────── */
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
@@ -247,8 +230,6 @@ class DetectionActivity : AppCompatActivity() {
         }
         return uri.path
     }
-
-    /* ─────────────── Networking ─────────────── */
 
     private fun uploadImage(imageFile: File) {
         progressDialog.show()
@@ -324,7 +305,6 @@ class DetectionActivity : AppCompatActivity() {
                             return@runOnUiThread
                         }
 
-                        /* Extract prediction fields */
                         val predictionClass = json.optString("class")
                         val condition       = json.optString("condition")
                         val message         = json.optString("message")
@@ -336,7 +316,6 @@ class DetectionActivity : AppCompatActivity() {
                             return@runOnUiThread
                         }
 
-                        /* Launch ResultActivity */
                         val intent = Intent(this@DetectionActivity, ResultActivity::class.java).apply {
                             putExtra("class",          predictionClass)
                             putExtra("condition",      condition)
@@ -355,8 +334,6 @@ class DetectionActivity : AppCompatActivity() {
             }
         })
     }
-
-    /* ─────────────── Dialog & permission callbacks ─────────────── */
 
     private fun showRetryDialog(msg: String, imageFile: File) {
         AlertDialog.Builder(this)

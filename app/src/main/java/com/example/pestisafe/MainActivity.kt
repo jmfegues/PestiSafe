@@ -66,23 +66,19 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    // Handle menu item clicks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_about -> {
-                // Go to AboutActivity
                 val aboutIntent = Intent(this, AboutActivity::class.java)
                 startActivity(aboutIntent)
                 true
             }
             R.id.nav_profile -> {
-                // Go to ProfileActivity
                 val profileIntent = Intent(this, ProfileActivity::class.java)
                 startActivity(profileIntent)
                 true
             }
             R.id.nav_logout -> {
-                // Show log out confirmation dialog
                 showLogoutConfirmationDialog()
                 true
             }
@@ -96,14 +92,13 @@ class MainActivity : AppCompatActivity() {
             .setMessage("Are you sure you want to log out?")
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
-                // Perform logout action
                 mAuth.signOut()
                 val intent = Intent(this, LogInActivity::class.java)
                 startActivity(intent)
-                finish() // Close the MainActivity after logout
+                finish()
             }
             .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss() // Dismiss the dialog if "No" is clicked
+                dialog.dismiss()
             }
             .create()
 

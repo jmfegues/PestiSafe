@@ -24,10 +24,8 @@ class ProfileActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         databaseReference = FirebaseDatabase.getInstance().reference
 
-        // Load the user data
         val userId = mAuth.currentUser?.uid
         if (userId != null) {
-            // Fetch the user data from Firebase
             databaseReference.child("users").child(userId).get().addOnSuccessListener {
                 if (it.exists()) {
                     val user = it.value as Map<String, Any>
@@ -39,7 +37,6 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
 
-        // Update user data
         binding.updateBtn.setOnClickListener {
             val fullName = binding.fullname.text.toString().split(" ")
             val firstName = fullName[0]
@@ -59,7 +56,6 @@ class ProfileActivity : AppCompatActivity() {
                         "country" to country
                     )
 
-                    // Save updated data to Firebase
                     databaseReference.child("users").child(userId).updateChildren(userMap)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {

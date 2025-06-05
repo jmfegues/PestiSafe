@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- Required permissions -->
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" /> <!-- Backward compatibility for storage permissions -->
+        android:required="true" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -22,12 +22,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PestiSafe"
         tools:targetApi="31">
+
         <activity
             android:name=".Activity.HistoryDetailActivity"
             android:exported="false" />
+
         <activity
             android:name=".Activity.ResultActivity"
-            android:exported="false" /> <!-- FileProvider for sharing camera images -->
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -36,23 +39,29 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider> <!-- UCrop cropping activity -->
+        </provider>
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="fullSensor"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> <!-- Your app activities -->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <activity
             android:name=".Activity.HistoryActivity"
-            android:exported="false" />
+            android:exported="true" />
+
         <activity
             android:name=".Activity.DetectionActivity"
             android:exported="true" />
+
         <activity
             android:name=".Activity.ProfileActivity"
             android:exported="true" />
+
         <activity
             android:name=".Activity.AboutActivity"
             android:exported="true" />
+
         <activity
             android:name=".Activity.SplashActivity"
             android:exported="true">
@@ -62,12 +71,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".Activity.SignUpActivity"
             android:exported="true" />
+
         <activity
             android:name=".Activity.LogInActivity"
             android:exported="true" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true" />

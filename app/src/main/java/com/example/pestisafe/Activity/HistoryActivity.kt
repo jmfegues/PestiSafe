@@ -1,11 +1,13 @@
 package com.example.pestisafe.Activity
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +20,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.io.File
+import java.util.*
 
 class HistoryActivity : AppCompatActivity() {
 
@@ -26,6 +29,7 @@ class HistoryActivity : AppCompatActivity() {
     private var fullList: List<ResultHistory> = emptyList()
     private lateinit var databaseRef: DatabaseReference
     private var isDescending = true
+    private var selectedDate: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,9 +75,36 @@ class HistoryActivity : AppCompatActivity() {
             } else {
                 fullList.sortedBy { it.timestamp }
             }
-            adapter.updateList(sortedList)
+            adapter.updateList(applyFilters(sortedList, binding.editSearchInp.text.toString()))
             buttonSort.text = if (isDescending) "Sort: Newest" else "Sort: Oldest"
         }
+
+        findViewById<MaterialButton>(R.id.buttonFilterDate).setOnClickListener {
+            showDatePicker()
+        }
+
+        findViewById<MaterialButton>(R.id.buttonClearDate).visibility = android.view.View.GONE
+
+        findViewById<MaterialButton>(R.id.buttonClearDate).setOnClickListener {
+            selectedDate = null
+            findViewById<MaterialButton>(R.id.buttonClearDate).visibility = android.view.View.GONE
+            adapter.updateList(applyFilters(fullList, binding.editSearchInp.text.toString()))
+        }
+    }
+
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        DatePickerDialog(this, { _, year, month, day ->
+            calendar.set(year, month, day, 0, 0, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            selectedDate = calendar.timeInMillis
+            findViewById<MaterialButton>(R.id.buttonClearDate).visibility = android.view.View.VISIBLE
+            adapter.updateList(applyFilters(fullList, binding.editSearchInp.text.toString()))
+        },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
     }
 
     private fun confirmDelete(item: ResultHistory) {
@@ -112,34 +143,49 @@ class HistoryActivity : AppCompatActivity() {
                         }
                     }
                     fullList = tempList.sortedByDescending { it.timestamp }
-                    adapter.updateList(fullList)
+                    adapter.updateList(applyFilters(fullList, binding.editSearchInp.text.toString()))
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Handle error if needed
                 }
             })
     }
 
     private fun filterList(query: String) {
-        val filtered = fullList.filter {
+        adapter.updateList(applyFilters(fullList, query))
+    }
+
+    private fun applyFilters(list: List<ResultHistory>, query: String): List<ResultHistory> {
+        val queryFiltered = list.filter {
             it.getDisplayTitle().contains(query, ignoreCase = true) ||
                     it.predictionClass.contains(query, ignoreCase = true) ||
                     it.condition.contains(query, ignoreCase = true) ||
                     it.message.contains(query, ignoreCase = true)
         }
-        adapter.updateList(filtered)
+        return selectedDate?.let { date ->
+            val startOfDay = date
+            val endOfDay = startOfDay + 24 * 60 * 60 * 1000
+            queryFiltered.filter { it.timestamp in startOfDay until endOfDay }
+        } ?: queryFiltered
     }
 
     private fun promptRenameTitle(item: ResultHistory) {
+        val scale = resources.displayMetrics.density
+        val paddingDp = (20 * scale + 0.5f).toInt()  // 16dp
+
         val editText = EditText(this).apply {
             setText(item.title)
-            hint = "Enter new title"
+            hint = "Enter new Title"
+        }
+
+        val container = FrameLayout(this).apply {
+            setPadding(paddingDp, 0, paddingDp, 0)
+            addView(editText)
         }
 
         AlertDialog.Builder(this)
-            .setTitle("Rename Title")
-            .setView(editText)
+            .setTitle("Rename")
+            .setView(container)
             .setPositiveButton("Save") { dialog, _ ->
                 val newTitle = editText.text.toString().trim()
                 if (newTitle.isNotEmpty() && newTitle != item.title) {
@@ -155,15 +201,15 @@ class HistoryActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("results").child(item.id)
         ref.child("title").setValue(newTitle).addOnSuccessListener {
-            Toast.makeText(this, "Title updated", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Renamed Successfully.", Toast.LENGTH_SHORT).show()
             renameLocalPdfFile(item.getDisplayTitle(), newTitle)
             val updatedList = fullList.map {
                 if (it.id == item.id) it.copy(title = newTitle) else it
             }
             fullList = updatedList
-            adapter.updateList(updatedList)
+            adapter.updateList(applyFilters(updatedList, binding.editSearchInp.text.toString()))
         }.addOnFailureListener {
-            Toast.makeText(this, "Failed to update title", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Rename Failed", Toast.LENGTH_SHORT).show()
         }
     }
 

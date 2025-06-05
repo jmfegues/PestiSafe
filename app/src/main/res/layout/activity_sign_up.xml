@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/signuplayout"
@@ -59,7 +60,6 @@
         app:layout_constraintVertical_bias="0.189"
         app:srcCompat="@drawable/round_rect_shape" />
 
-    <!-- First Name and Last Name horizontally aligned center -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/txtinpfirstname"
         android:layout_width="130dp"
