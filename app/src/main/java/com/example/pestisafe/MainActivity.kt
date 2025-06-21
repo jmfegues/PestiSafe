@@ -56,6 +56,18 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.cvphilgapmanual.setOnClickListener {
+            val urlphilgap = "https://bucketeer-3eb16243-2c1c-43d2-be4e-1c2b3664d293.s3.amazonaws.com/2023/05/02-PhilGAP-Manual.pdf"
+            val intent = Intent(Intent.ACTION_VIEW, urlphilgap.toUri())
+            startActivity(intent)
+        }
+
+        binding.cvgapcode.setOnClickListener {
+            val urlgapcode = "https://ppssd.buplant.da.gov.ph/storage/app/public/LegalReference/PNS_BAFS%2049_2021%20Code%20of%20GAP%20for%20Fruits%20and%20Vegetable%20Farming.pdf"
+            val intent = Intent(Intent.ACTION_VIEW, urlgapcode.toUri())
+            startActivity(intent)
+        }
+
         val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""

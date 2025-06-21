@@ -283,7 +283,6 @@ class DetectionActivity : AppCompatActivity() {
                     try {
                         val json = JSONObject(responseBody)
 
-                        /* Handle invalid strip */
                         if (json.optString("recognized_class") == "invalid") {
                             val err = json.optString("error",
                                 "Invalid image. Please upload a clear test strip.")
@@ -291,15 +290,15 @@ class DetectionActivity : AppCompatActivity() {
                             AlertDialog.Builder(this@DetectionActivity)
                                 .setTitle("Invalid Image")
                                 .setMessage(err)
-                                .setPositiveButton("Upload") { dialog, _ ->
-                                    dialog.dismiss()
-                                    checkStoragePermissionAndPickFile()
-                                }
-                                .setNegativeButton("Camera") { dialog, _ ->
+                                .setPositiveButton("Camera") { dialog, _ ->
                                     dialog.dismiss()
                                     checkCameraPermissionAndOpenCamera()
                                 }
-                                .setCancelable(false)
+                                .setNegativeButton("Upload") { dialog, _ ->
+                                    dialog.dismiss()
+                                    checkStoragePermissionAndPickFile()
+                                }
+                                .setCancelable(true)
                                 .show()
 
                             return@runOnUiThread

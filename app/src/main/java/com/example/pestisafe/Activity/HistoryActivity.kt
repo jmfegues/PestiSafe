@@ -2,6 +2,7 @@ package com.example.pestisafe.Activity
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
@@ -30,6 +31,7 @@ class HistoryActivity : AppCompatActivity() {
     private lateinit var databaseRef: DatabaseReference
     private var isDescending = true
     private var selectedDate: Long? = null
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,8 +134,10 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun loadHistory() {
+        showLoadingDialog()
+
         databaseRef.orderByChild("timestamp")
-            .addValueEventListener(object : ValueEventListener {
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val tempList = mutableListOf<ResultHistory>()
                     for (child in snapshot.children) {
@@ -144,12 +148,16 @@ class HistoryActivity : AppCompatActivity() {
                     }
                     fullList = tempList.sortedByDescending { it.timestamp }
                     adapter.updateList(applyFilters(fullList, binding.editSearchInp.text.toString()))
+                    hideLoadingDialog()
                 }
 
                 override fun onCancelled(error: DatabaseError) {
+                    hideLoadingDialog()
+                    Toast.makeText(this@HistoryActivity, "Failed to load history", Toast.LENGTH_SHORT).show()
                 }
             })
     }
+
 
     private fun filterList(query: String) {
         adapter.updateList(applyFilters(fullList, query))
@@ -244,4 +252,19 @@ class HistoryActivity : AppCompatActivity() {
             file.delete()
         }
     }
+
+    private fun showLoadingDialog() {
+        progressDialog = ProgressDialog(this).apply {
+            setTitle("Loading")
+            setMessage("Please wait...")
+            setCancelable(false)
+            show()
+        }
+    }
+
+    private fun hideLoadingDialog() {
+        progressDialog?.dismiss()
+    }
+
+
 }

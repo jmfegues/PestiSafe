@@ -89,4 +89,6 @@
     <string name="residue_range">Residue Range: –</string>
     <string name="filter_by_date">Filter by Date</string>
     <string name="clear">Clear</string>
+    <string name="code_of_gap_for_fruits_and_vegetables">Code of GAP for Fruits and Vegetables</string>
+    <string name="philgap_manual_for_fruit_and_vegetable_farming">PhilGAP Manual for Fruit and Vegetable Farming</string>
 </resources>

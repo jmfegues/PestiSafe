@@ -26,9 +26,9 @@
         android:textSize="25sp"
         android:textStyle="bold"
         android:layout_marginTop="80dp"
+        android:layout_marginStart="45dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="45dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvdetection"
@@ -39,7 +39,9 @@
         app:cardElevation="4dp"
         app:layout_constraintTop_toBottomOf="@id/hometxt"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -51,9 +53,7 @@
                 android:id="@+id/cameracard"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginStart="16dp"
                 android:scaleType="center"
                 android:src="@drawable/cameraicon"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -65,15 +65,14 @@
                 android:id="@+id/startdetection"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="24dp"
                 android:text="@string/start_the_detection"
                 android:textColor="@color/darkGreen"
-                android:textSize="19sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cameracard"
+                app:layout_constraintStart_toEndOf="@id/cameracard"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -82,12 +81,14 @@
         android:id="@+id/cvhistory"
         android:layout_width="280dp"
         android:layout_height="80dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
         app:cardCornerRadius="24dp"
         app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/cvdetection"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/cvdetection">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -99,9 +100,7 @@
                 android:id="@+id/historycard"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginStart="16dp"
                 android:scaleType="center"
                 android:src="@drawable/historyicon"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -113,15 +112,14 @@
                 android:id="@+id/historydetection"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="24dp"
                 android:text="@string/history_of_detection_results"
                 android:textColor="@color/darkGreen"
-                android:textSize="19sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/historycard"
+                app:layout_constraintStart_toEndOf="@id/historycard"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -130,158 +128,265 @@
         android:id="@+id/addinfotxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="20dp"
         android:text="@string/additional_information"
         android:textColor="@color/darkGreen"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@+id/cvhistory"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="50dp" />
+        app:layout_constraintTop_toBottomOf="@+id/cvhistory" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvregspes"
-        android:layout_width="300dp"
-        android:layout_height="70dp"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="4dp"
+        android:layout_marginBottom="16dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/addinfotxt"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/card_border"
-            android:padding="8dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="32dp">
 
-            <ImageView
-                android:id="@+id/regcard"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:scaleType="center"
-                android:src="@drawable/fileicon"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/darkGreen" />
-
-            <TextView
-                android:id="@+id/regpest"
-                android:layout_width="0dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvregspes"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="10dp"
-                android:text="@string/list_of_registered_pesticide_products"
-                android:textColor="@color/darkGreen"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/regcard"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvbanned"
-        android:layout_width="300dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/cvregspes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/card_border"
+                    android:padding="8dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/card_border"
-            android:padding="8dp">
+                    <ImageView
+                        android:id="@+id/regicon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/fileicon"
+                        android:scaleType="center"
+                        app:tint="@color/darkGreen"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
-            <ImageView
-                android:id="@+id/bannedcard"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:scaleType="center"
-                android:src="@drawable/fileicon"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/darkGreen" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/list_of_registered_pesticide_products"
+                        android:textColor="@color/darkGreen"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginEnd="10dp"
+                        app:layout_constraintStart_toEndOf="@id/regicon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/bannedpest"
-                android:layout_width="0dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvbanned"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="10dp"
-                android:text="@string/list_of_banned_and_registered_pesticides"
-                android:textColor="@color/darkGreen"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/bannedcard"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvmrl"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/cvbanned"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/card_border"
+                    android:padding="8dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/card_border"
-            android:padding="8dp">
+                    <ImageView
+                        android:id="@+id/bannedicon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/fileicon"
+                        android:scaleType="center"
+                        app:tint="@color/darkGreen"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
-            <ImageView
-                android:id="@+id/mrlcard"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:scaleType="center"
-                android:src="@drawable/fileicon"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/darkGreen" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/list_of_banned_and_registered_pesticides"
+                        android:textColor="@color/darkGreen"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginEnd="10dp"
+                        app:layout_constraintStart_toEndOf="@id/bannedicon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/mrlval"
-                android:layout_width="0dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvmrl"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginEnd="10dp"
-                android:text="@string/philippine_national_standard_for_banana_maximum_residue_limits_mrl_of_pesticides"
-                android:textColor="@color/darkGreen"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/mrlcard"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/card_border"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:id="@+id/mrlcard"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/fileicon"
+                        android:scaleType="center"
+                        app:tint="@color/darkGreen"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/philippine_national_standard_for_banana_maximum_residue_limits_mrl_of_pesticides"
+                        android:textColor="@color/darkGreen"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginEnd="10dp"
+                        app:layout_constraintStart_toEndOf="@id/mrlcard"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvphilgapmanual"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/card_border"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:id="@+id/philgapicon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/fileicon"
+                        android:scaleType="center"
+                        app:tint="@color/darkGreen"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/philgap_manual_for_fruit_and_vegetable_farming"
+                        android:textColor="@color/darkGreen"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginEnd="10dp"
+                        app:layout_constraintStart_toEndOf="@id/philgapicon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvgapcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="32dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/card_border"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:id="@+id/gapcodeicon"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/fileicon"
+                        android:scaleType="center"
+                        app:tint="@color/darkGreen"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/code_of_gap_for_fruits_and_vegetables"
+                        android:textColor="@color/darkGreen"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginEnd="10dp"
+                        app:layout_constraintStart_toEndOf="@id/gapcodeicon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

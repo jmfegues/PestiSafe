@@ -70,7 +70,6 @@ class HistoryDetailActivity : AppCompatActivity() {
 
 
     private fun displayResultDetails() {
-        // image
         if (result.imageBase64.isNotEmpty()) {
             try {
                 val bytes = Base64.decode(result.imageBase64, Base64.DEFAULT)
@@ -81,7 +80,6 @@ class HistoryDetailActivity : AppCompatActivity() {
             }
         } else resultImageView.setImageResource(android.R.color.darker_gray)
 
-        // text fields
         resultClassText.text        = "Classification: ${result.predictionClass}"
         resultConditionText.text    = "Condition: ${result.condition}"
         resultResidueRangeText.text = "Residue Range: ${result.residueRange}"
@@ -109,9 +107,11 @@ class HistoryDetailActivity : AppCompatActivity() {
 
     private fun exportResultAsPdf() {
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            textSize = 16f
+            textSize = 13f
             color = Color.BLACK
+            typeface = Typeface.create("sans-serif-condensed", Typeface.NORMAL) // Arial Narrow-like
         }
+
         val pageW = 595
         val pageH = 842
         val margin = 72
@@ -123,7 +123,23 @@ class HistoryDetailActivity : AppCompatActivity() {
         var page = pdf.startPage(PdfDocument.PageInfo.Builder(pageW, pageH, pageNo).create())
         var canvas = page.canvas
 
+        fun drawFooter(canvas: Canvas, pageNumber: Int, paint: TextPaint, classification: String) {
+            val date = SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date())
+            val footerText = "$classification • $date • Page $pageNumber"
+            val footerPaint = TextPaint(paint).apply {
+                textAlign = Paint.Align.CENTER
+                textSize = 12f
+            }
+            canvas.drawText(
+                footerText,
+                (canvas.width / 2).toFloat(),
+                (canvas.height - 30).toFloat(),
+                footerPaint
+            )
+        }
+
         fun newPage() {
+            drawFooter(canvas, pageNo, paint, result.predictionClass)
             pdf.finishPage(page)
             pageNo++
             page = pdf.startPage(PdfDocument.PageInfo.Builder(pageW, pageH, pageNo).create())
@@ -135,39 +151,43 @@ class HistoryDetailActivity : AppCompatActivity() {
             if (y + h > pageH - margin) newPage()
         }
 
-        fun drawLbl(lbl: String) {
+        fun drawLabelAndValue(label: String, value: String) {
             paint.isFakeBoldText = true
-            canvas.drawText(lbl, margin.toFloat(), y, paint)
+            ensureSpace(paint.textSize + 6f)
+            canvas.drawText(label, margin.toFloat(), y, paint)
+            y += paint.textSize + 4f
             paint.isFakeBoldText = false
-            y += paint.textSize
-        }
 
-        fun drawText(text: String) {
-            val sl = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                StaticLayout.Builder.obtain(text, 0, text.length, paint, usableW)
+            val staticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                StaticLayout.Builder.obtain(value, 0, value.length, paint, usableW)
                     .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                    .setJustificationMode(Layout.JUSTIFICATION_MODE_INTER_WORD)
+                    .setLineSpacing(4f, 1f)
                     .build()
             else
-                StaticLayout(text, paint, usableW, Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false)
+                StaticLayout(value, paint, usableW, Layout.Alignment.ALIGN_NORMAL, 1f, 4f, false)
 
-            ensureSpace(sl.height.toFloat())
-            canvas.save()
-            canvas.translate(margin.toFloat(), y)
-            sl.draw(canvas)
-            canvas.restore()
+            for (i in 0 until staticLayout.lineCount) {
+                val lineStart = staticLayout.getLineStart(i)
+                val lineEnd = staticLayout.getLineEnd(i)
+                val lineText = value.substring(lineStart, lineEnd)
+                val lineHeight = staticLayout.getLineBottom(i) - staticLayout.getLineTop(i)
 
-            y += sl.height
+                ensureSpace(lineHeight.toFloat())
+                canvas.drawText(lineText.trimEnd(), margin.toFloat(), y, paint)
+                y += lineHeight.toFloat()
+            }
+
             y += 20f
         }
 
-        paint.textSize = 24f
+        paint.textSize = 18f
         paint.isFakeBoldText = true
         canvas.drawText("Detection Result", margin.toFloat(), y, paint)
         paint.isFakeBoldText = false
-        paint.textSize = 16f
+        paint.textSize = 13f
         y += 40f
 
-        // Image
         if (result.imageBase64.isNotEmpty()) {
             try {
                 val decodedBytes = Base64.decode(result.imageBase64, Base64.DEFAULT)
@@ -177,28 +197,18 @@ class HistoryDetailActivity : AppCompatActivity() {
                 canvas.drawBitmap(img, margin.toFloat(), y, null)
                 y += 170f
             } catch (_: Exception) {
-                drawText("Image unavailable.")
+                drawLabelAndValue("Image", "Image unavailable.")
             }
         }
 
-        drawLbl("Date:")
-        drawText(SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date(result.timestamp)))
+        drawLabelAndValue("Date:", SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(Date(result.timestamp)))
+        drawLabelAndValue("Classification:", result.predictionClass)
+        drawLabelAndValue("Condition:", result.condition)
+        drawLabelAndValue("Residue Range:", result.residueRange)
+        drawLabelAndValue("Pesticide:", result.pesticide)
+        drawLabelAndValue("Note:", result.message)
 
-        drawLbl("Classification:")
-        drawText(result.predictionClass)
-
-        drawLbl("Condition:")
-        drawText(result.condition)
-
-        drawLbl("Residue Range:")
-        drawText(result.residueRange)
-
-        drawLbl("Pesticide:")
-        drawText(result.pesticide)
-
-        drawLbl("Message:")
-        drawText(result.message)
-
+        drawFooter(canvas, pageNo, paint, result.predictionClass)
         pdf.finishPage(page)
 
         val fname = if (result.title.isNotBlank()) {
@@ -206,6 +216,7 @@ class HistoryDetailActivity : AppCompatActivity() {
         } else {
             "PestiSafe_${result.predictionClass.replace("\\W+".toRegex(), "_")}_${System.currentTimeMillis()}.pdf"
         }
+
         val outDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val outFile = File(outDir, fname)
 
