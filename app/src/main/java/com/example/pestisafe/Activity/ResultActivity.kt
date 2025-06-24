@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pestisafe.MainActivity
 import com.example.pestisafe.R
+import com.example.pestisafe.databinding.ActivityResultBinding
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -22,13 +23,16 @@ import java.util.*
 
 class ResultActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityResultBinding
+
     private var isSaved = false
     private var firebaseDocId: String? = null
     private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_result)
+        binding = ActivityResultBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         findViewById<MaterialToolbar>(R.id.topAppBar).setNavigationOnClickListener { finish() }
 

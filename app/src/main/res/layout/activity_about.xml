@@ -1,159 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/aboutlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="@color/white"
     tools:context=".Activity.AboutActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/topAppBar"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/aboutlayout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginBottom="6dp"
-        app:layout_constraintBottom_toTopOf="@+id/logoabout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:navigationIcon="@drawable/backicon"
-        app:navigationIconTint="@color/darkGreen"/>
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/logoabout"
-        android:layout_width="215dp"
-        android:layout_height="135dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topAppBar"
-        app:srcCompat="@drawable/pestisafelogo1" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginBottom="6dp"
+            app:layout_constraintBottom_toTopOf="@+id/logoabout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:navigationIcon="@drawable/backicon"
+            app:navigationIconTint="@color/darkGreen"/>
 
-    <TextView
-        android:id="@+id/missiontxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="@string/mission"
-        android:textColor="@color/darkGreen"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logoabout" />
+        <ImageView
+            android:id="@+id/logoabout"
+            android:layout_width="230dp"
+            android:layout_height="165dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topAppBar"
+            app:srcCompat="@drawable/pestisafelogo1" />
 
-    <TextView
-        android:id="@+id/missionstring"
-        android:layout_width="320dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/pestisafe_aims_to_provide_agricultural_safety_and_sustainability_by_innovating_solutions_for_detecting_pesticide_residue_level_in_cavendish_bananas_committed_to_empowering_supply_chain_stakeholders_promoting_a_healthier_world_through_informed_decision_and_sustainable_farming_practices"
-        android:textAlignment="center"
-        android:textColor="@color/darkGreen"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/missiontxt" />
+        <TextView
+            android:id="@+id/missiontxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@string/mission"
+            android:textColor="@color/darkGreen"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logoabout" />
 
-    <TextView
-        android:id="@+id/visiontxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/vision"
-        android:textColor="@color/darkGreen"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/missionstring" />
+        <TextView
+            android:id="@+id/missionstring"
+            android:layout_width="320dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/pestisafe_aims_to_provide_agricultural_safety_and_sustainability_by_innovating_solutions_for_detecting_pesticide_residue_level_in_cavendish_bananas_committed_to_empowering_supply_chain_stakeholders_promoting_a_healthier_world_through_informed_decision_and_sustainable_farming_practices"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/missiontxt" />
 
-    <TextView
-        android:id="@+id/visionstring"
-        android:layout_width="320dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/empowering_agricultural_safety_globally_pestisafe_envisions_to_provide_pesticide_residue_level_detection_in_cavendish_banana_with_the_aid_of_advanced_technology_our_commitment_to_innovation_and_responsible_practices_aim_to_create_a_sustainable_and_secure_food_supply_for_generations"
-        android:textAlignment="center"
-        android:textColor="@color/darkGreen"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/visiontxt" />
+        <TextView
+            android:id="@+id/visiontxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/vision"
+            android:textColor="@color/darkGreen"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/missionstring" />
 
-    <TextView
-        android:id="@+id/contactus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="179dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="174dp"
-        android:text="@string/contact_us"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.571"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/visionstring" />
+        <TextView
+            android:id="@+id/visionstring"
+            android:layout_width="320dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/empowering_agricultural_safety_globally_pestisafe_envisions_to_provide_pesticide_residue_level_detection_in_cavendish_banana_with_the_aid_of_advanced_technology_our_commitment_to_innovation_and_responsible_practices_aim_to_create_a_sustainable_and_secure_food_supply_for_generations"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/visiontxt" />
 
-    <TextView
-        android:id="@+id/rothampname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/rothelien_caryle_akai_amparo"
-        android:textAlignment="center"
-        android:textColor="@color/darkGreen"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contactus" />
+        <TextView
+            android:id="@+id/contactus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="179dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="174dp"
+            android:text="@string/contact_us"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.571"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/visionstring" />
 
-    <TextView
-        android:id="@+id/rothampemail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        <TextView
+            android:id="@+id/rothampname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/rothelien_caryle_akai_amparo"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactus" />
 
-        android:text="@string/qrcasamparo_tip_edu_ph"
-        android:textAlignment="center"
-        android:textColor="@color/darkGreen"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rothampname" />
+        <TextView
+            android:id="@+id/rothampemail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-    <TextView
-        android:id="@+id/jmfegsname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/johannah_mariz_fegues"
-        android:textAlignment="center"
-        android:textColor="@color/darkGreen"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rothampemail" />
+            android:text="@string/qrcasamparo_tip_edu_ph"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rothampname" />
 
-    <TextView
-        android:id="@+id/jmfegsemail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/qjmdfegues_tip_edu_ph"
-        android:textAlignment="center"
-        android:textColor="@color/darkGreen"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/jmfegsname" />
+        <TextView
+            android:id="@+id/jmfegsname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/johannah_mariz_fegues"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rothampemail" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/jmfegsemail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/qjmdfegues_tip_edu_ph"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/jmfegsname" />
+
+        <TextView
+            android:id="@+id/atusingname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/angelo_tusing"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/jmfegsemail" />
+
+        <TextView
+            android:id="@+id/atusingemail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/qavtusing_tip_edu_ph"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/atusingname" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

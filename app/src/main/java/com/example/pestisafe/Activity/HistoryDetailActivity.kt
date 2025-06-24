@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.pestisafe.R
 import com.example.pestisafe.ResultHistory
+import com.example.pestisafe.databinding.ActivityHistoryDetailBinding
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -27,6 +28,7 @@ import java.util.*
 class HistoryDetailActivity : AppCompatActivity() {
 
     private lateinit var result: ResultHistory
+    private lateinit var binding: ActivityHistoryDetailBinding
 
     private lateinit var resultImageView: ImageView
     private lateinit var resultClassText: TextView
@@ -46,7 +48,8 @@ class HistoryDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_history_detail)
+        binding = ActivityHistoryDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         findViewById<MaterialToolbar>(R.id.topAppBar).setNavigationOnClickListener { finish() }
 
@@ -67,7 +70,6 @@ class HistoryDetailActivity : AppCompatActivity() {
         btnExportPdf.setOnClickListener { checkPermissionsAndExportPdf() }
         btnDelete.setOnClickListener   { confirmDelete() }
     }
-
 
     private fun displayResultDetails() {
         if (result.imageBase64.isNotEmpty()) {
@@ -109,7 +111,7 @@ class HistoryDetailActivity : AppCompatActivity() {
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = 13f
             color = Color.BLACK
-            typeface = Typeface.create("sans-serif-condensed", Typeface.NORMAL) // Arial Narrow-like
+            typeface = Typeface.create("sans-serif-condensed", Typeface.NORMAL) 
         }
 
         val pageW = 595
@@ -245,4 +247,6 @@ class HistoryDetailActivity : AppCompatActivity() {
             .addOnSuccessListener { Toast.makeText(this,"Deleted",Toast.LENGTH_SHORT).show(); finish() }
             .addOnFailureListener { Toast.makeText(this,"Failed to delete",Toast.LENGTH_SHORT).show() }
     }
+
+    companion object
 }
